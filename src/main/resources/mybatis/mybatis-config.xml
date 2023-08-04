@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<configuration>
+	
+	<!-- 
+		Mapper 파일에서 parameterType, resultType으로 자주 사용되는 클래스에 대한 별칭을 정의한다.
+	 -->
+	<typeAliases>
+		<!--  
+			<package />
+				지정된 패키지에 속한 클래스들에 대한 별칭을 일괄적으로 등록한다.
+		 -->
+		<package name="com.letsparty.vo"/>
+	</typeAliases>
+</configuration>

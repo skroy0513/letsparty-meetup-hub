@@ -1,0 +1,29 @@
+server:
+  port: 80
+
+logging:
+  level:
+#    root: info
+    org:
+      springboot:
+#        security: info
+#        info: info
+    '[com.letsparty.mapper]': trace
+
+spring:
+  profiles:
+    include:
+    - dev
+
+mybatis:
+  mapper-locations:
+  - mybatis/mapper/*.xml
+  type-aliases-package: com.letsparty.vo
+#  type-aliases-package: com.letsparty.mapper
+  configuration:
+#    call-setters-on-nulls: true
+    map-underscore-to-camel-case: true
+    # NULL값이 허용되는 컬럼에 NULL값을 추가할 수 있도록 설정
+    jdbc-type-for-null: 'NULL'
+    log-impl: org.apache.ibatis.logging.log4j2.Log4j2Impl
+
