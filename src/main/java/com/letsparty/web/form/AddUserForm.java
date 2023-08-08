@@ -1,19 +1,18 @@
-package com.letsparty.vo;
+package com.letsparty.web.form;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import groovy.transform.ToString;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
 @ToString
-public class User {
-	
+public class AddUserForm {
+
 	private String id;
 	private String name;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -21,10 +20,5 @@ public class User {
 	private char gender;
 	private String email;
 	private String tel;
-	private boolean disabled;
-	private LocalDateTime updatedAt;
-	private LocalDateTime createdAt;
-	private String providerType;
 	private String password;
-	
 }
