@@ -15,7 +15,6 @@ public class AddUserForm {
 
 	private String id;
 	private String name;
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date birthday;
 	private char gender;
 	private String email;

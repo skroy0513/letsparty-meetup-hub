@@ -8,11 +8,9 @@ import com.letsparty.service.UserService;
 import com.letsparty.web.form.AddUserForm;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequiredArgsConstructor
-@Slf4j
 public class MainController {
 	
 	private final UserService userService;
@@ -34,8 +32,6 @@ public class MainController {
 	
 	@PostMapping("/register")
 	public String register(AddUserForm userform) {
-		log.info("AddUserForm -> {}, {}, {}, {}, {}, {}",
-				userform.getId(), userform.getPassword(), userform.getName(), userform.getEmail(), userform.getTel(), userform.getGender());
 		userService.registerUser(userform);
 		return "redirect:/";
 	}
