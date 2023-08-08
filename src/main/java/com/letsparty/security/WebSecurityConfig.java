@@ -9,6 +9,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.letsparty.security.service.CustomOAuth2UserService;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -28,9 +30,17 @@ public class WebSecurityConfig {
 				.logoutUrl("/logout")
 				.logoutSuccessUrl("/")
 				.invalidateHttpSession(true))
+//			.and()
+//				.oauth2Login()
+//				.loginPage("/login")
+//				.defaultSuccessUrl("/")
+//				.failureUrl("/login?error=fail")
+//				.userInfoEndpoint()
+//				.userService(CustomOAuth2UserService)				
 			.exceptionHandling()
 				.authenticationEntryPoint((request, response, authException) -> response.sendRedirect("/login?error=noauth"))
 				.accessDeniedHandler((request, response, accessDeniedException) -> response.sendRedirect("/login?error=denied"));
+		
 		return http.build();
 	}
 	
