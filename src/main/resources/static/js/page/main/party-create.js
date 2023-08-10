@@ -15,6 +15,9 @@ $(function() {
         // preview를 보이게 하고, result를 숨긴다.
         $("#preview").show();
         $("#result").hide();
+        
+        // editedImage 대신 defaultImage를 입력 필드에 설정
+    	$("#editedImage").val(imagepath);
     })
 
     // 사용자가 사진추가 이미지를 눌러 로컬에서 이미지를 선택할 수 있게 하는 스크립트
@@ -82,8 +85,11 @@ $(function() {
     });
     
     $cropbutton.on("click", function() {
+		let croppedCanvas = cropper.getCroppedCanvas();
+		let editedImage = croppedCanvas.toDataURL();
         $result.html('');
         $result.append(cropper.getCroppedCanvas());
+        $("#editedImage").val(editedImage);
         $modal.modal('hide');
         // result를 보이게 하고, preview를 숨긴다.
         $("#result").show();
