@@ -22,9 +22,7 @@ public class UserService {
 	 */
 	public void signupUser(SignupForm signupForm) {
 		User user = new User();
-		System.out.println(signupForm.getGender());
 		BeanUtils.copyProperties(signupForm, user);
-		System.out.println(user.getGender());
 		String encryptedPassword = passwordEncoder.encode(signupForm.getPassword());
 		user.setPassword(encryptedPassword);
 		
