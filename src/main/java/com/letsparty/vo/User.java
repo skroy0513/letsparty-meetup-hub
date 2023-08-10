@@ -16,7 +16,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class User implements UserDetails{
+public class User implements UserDetails {
 	
 	private static final long serialVersionUID = 1L;
 	

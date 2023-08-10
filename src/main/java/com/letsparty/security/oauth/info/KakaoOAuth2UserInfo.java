@@ -26,7 +26,7 @@ public class KakaoOAuth2UserInfo extends OAuth2UserInfo{
 	@Override
 	@SuppressWarnings("unchecked")
 	public String getEmail() {
-		Map<String, Object> kakaoAccount = (Map<String, Object>) getAttributes().get("properties");
+		Map<String, Object> kakaoAccount = (Map<String, Object>) getAttributes().get("kakao_account");
 		if (kakaoAccount == null) {
 			return null;
 		}

@@ -13,7 +13,6 @@ spring:
             - profile_nickname
             - profile_image
             - account_email
-            - gener
             client-name: Kakao
         provider:
           kakao:

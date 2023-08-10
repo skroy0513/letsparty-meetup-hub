@@ -1,5 +1,7 @@
 package com.letsparty.security.service;
 
+import java.util.Date;
+
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -32,19 +34,35 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getAuth2UserInfo(providerType, oAuth2User.getAttributes());
 		User savedUser = userMapper.getUserById(userInfo.getId());
 		
-		if (savedUser == null) {
+		if (savedUser != null) {
 			if (!providerType.equals(savedUser.getProviderType())) {
 				throw new OAuthProviderMissMatchException("소셜로그인 공급자가 일치하지 않습니다.");
-				
-			} else {
-
 			}
 			
-			return new CustomOAuth2User(savedUser, userInfo.getAttributes());
+		} else {
+			System.out.println(userInfo.getId());
+			System.out.println(userInfo.getEmail());
+			savedUser = createUser(userInfo, providerType);
 		}
 		
-		return null;
+		return new CustomOAuth2User(savedUser, userInfo.getAttributes());
 	}
 	
+	private User createUser(OAuth2UserInfo userInfo, String providerType) {
+		User user = new User();
+		user.setId(userInfo.getId());
+		user.setEmail(userInfo.getEmail());
+		user.setName(userInfo.getName());
+		user.setGender('M');
+		user.setProviderType(providerType);
+		user.setTel("010-2313-1231");
+		user.setBirthday(new Date());
+		
+		userMapper.createUser(user);
+		
+		return user;
+	}
+	
+
 
 }

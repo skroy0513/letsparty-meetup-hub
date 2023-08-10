@@ -28,7 +28,7 @@ public class MainController {
 	}
 	
 	@GetMapping("/signup")
-	public String form(Model model) {
+	public String signup(Model model) {
 		model.addAttribute("signupForm", new SignupForm());
 		return "page/main/signup";
 	}
