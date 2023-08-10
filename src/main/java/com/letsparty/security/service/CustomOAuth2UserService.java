@@ -40,8 +40,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 			}
 			
 		} else {
-			System.out.println(userInfo.getId());
-			System.out.println(userInfo.getEmail());
 			savedUser = createUser(userInfo, providerType);
 		}
 		
