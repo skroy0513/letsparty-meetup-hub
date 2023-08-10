@@ -6,13 +6,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.letsparty.mapper.UserMapper;
+import com.letsparty.security.user.CustomUserDetails;
 import com.letsparty.vo.User;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class CustonUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
 	private final UserMapper userMapper;
 	
@@ -22,6 +23,6 @@ public class CustonUserDetailsService implements UserDetailsService {
 		if (savedUser == null) {
 			throw new UsernameNotFoundException("사용자 정보를 찾을 수 없습니다.");
 		}
-		return savedUser;
+		return new CustomUserDetails(savedUser);
 	}
 }

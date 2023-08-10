@@ -1,9 +1,6 @@
 package com.letsparty.service;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService {
 
 	private final UserMapper userMapper;
 	private final PasswordEncoder passwordEncoder;
@@ -23,27 +20,15 @@ public class UserService implements UserDetailsService {
 	/*
 	 * 유저 정보 저장(회원가입)
 	 */
-	public void signupUser(SignupForm sigunupForm) {
+	public void signupUser(SignupForm signupForm) {
 		User user = new User();
-		BeanUtils.copyProperties(sigunupForm, user);
-		String encryptedPassword = passwordEncoder.encode(sigunupForm.getPassword());
+		System.out.println(signupForm.getGender());
+		BeanUtils.copyProperties(signupForm, user);
+		System.out.println(user.getGender());
+		String encryptedPassword = passwordEncoder.encode(signupForm.getPassword());
 		user.setPassword(encryptedPassword);
 		
 		userMapper.createUser(user);
 	}
 
-	/*
-	 * 로그인
-	 */
-	@Override
-	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-		System.out.println(id);
-		User user = userMapper.getUserById(id);
-		if (user == null) {
-			throw new UsernameNotFoundException("회원정보가 존재하지 않습니다.");
-		}
-		
-		return user;
-	}
-	
 }
