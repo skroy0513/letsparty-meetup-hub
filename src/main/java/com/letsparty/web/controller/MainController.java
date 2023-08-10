@@ -1,13 +1,15 @@
 package com.letsparty.web.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.letsparty.service.UserService;
-import com.letsparty.web.form.AddUserForm;
 
 import lombok.RequiredArgsConstructor;
+
+import com.letsparty.web.form.SignupForm;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,14 +27,20 @@ public class MainController {
 		return "page/main/login";
 	}
 	
-	@GetMapping("/register")
-	public String register() {
-		return "page/main/register";
+	@GetMapping("/signup")
+	public String form(Model model) {
+		model.addAttribute("signupForm", new SignupForm());
+		return "page/main/signup";
 	}
-	
-	@PostMapping("/register")
-	public String register(AddUserForm userform) {
-		userService.registerUser(userform);
+
+	@PostMapping("/signup")
+	public String signup(SignupForm signupForm) {
+		userService.signupUser(signupForm);
 		return "redirect:/";
+	}
+    
+	@GetMapping("/party-create")
+	public String partyCreate() {
+		return "page/main/party-create";
 	}
 }

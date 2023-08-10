@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.letsparty.mapper.UserMapper;
 import com.letsparty.vo.User;
-import com.letsparty.web.form.AddUserForm;
+import com.letsparty.web.form.SignupForm;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,10 +23,10 @@ public class UserService implements UserDetailsService {
 	/*
 	 * 유저 정보 저장(회원가입)
 	 */
-	public void registerUser(AddUserForm userform) {
+	public void signupUser(SignupForm sigunupForm) {
 		User user = new User();
-		BeanUtils.copyProperties(userform, user);
-		String encryptedPassword = passwordEncoder.encode(userform.getPassword());
+		BeanUtils.copyProperties(sigunupForm, user);
+		String encryptedPassword = passwordEncoder.encode(sigunupForm.getPassword());
 		user.setPassword(encryptedPassword);
 		
 		userMapper.createUser(user);
