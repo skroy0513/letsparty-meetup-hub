@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.letsparty.security.user.LoginUser;
 import com.letsparty.service.UserService;
-import com.letsparty.service.partyService;
+import com.letsparty.service.PartyService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ import com.letsparty.web.form.SignupForm;
 public class MainController {
 	
 	private final UserService userService;
-	private final partyService partyService;
+	private final PartyService partyService;
 
 	@GetMapping("/")
 	public String home() {

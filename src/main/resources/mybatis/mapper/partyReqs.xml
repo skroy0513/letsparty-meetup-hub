@@ -3,10 +3,10 @@
 <mapper namespace="com.letsparty.mapper.PartyReqMapper">
 
 	<!-- 파티 가입 조건 추가 -->
-	<update id="insertPartyReq" parameterType="com.letsparty.vo.PartyReq">
+	<insert id="insertPartyReq" parameterType="com.letsparty.vo.PartyReq">
 		insert into party_req
 		(party_no, req_name, req_value, req_description)
 		values
 		(#{party.no}, #{name}, #{value}, #{description})
-	</update>
+	</insert>
 </mapper>

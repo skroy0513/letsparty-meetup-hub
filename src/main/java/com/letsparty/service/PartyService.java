@@ -1,11 +1,14 @@
 package com.letsparty.service;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Base64;
+import java.util.Base64.Decoder;
+import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.letsparty.mapper.CategoryMapper;
 import com.letsparty.mapper.PartyMapper;
@@ -18,27 +21,22 @@ import com.letsparty.vo.User;
 import com.letsparty.web.form.PartyCreateForm;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
-public class partyService {
+public class PartyService {
 	
 	private final UserMapper userMapper;
 	private final PartyMapper partyMapper;
 	private final CategoryMapper categoryMapper;
 	private final PartyReqMapper partyReqMapper;
 	
-	public void createParty(PartyCreateForm partyCreateForm, String leaderId) throws IllegalStateException, IOException {
+	public void createParty(PartyCreateForm partyCreateForm, String leaderId) {
+		String base64Prefix = "data:image/png;base64,";
 		
 		Party party = new Party();
 		BeanUtils.copyProperties(partyCreateForm, party);
-		
-		// 커버 저장
-//		MultipartFile file = partyCreateForm.getImageFile();
-//		String filename = file.getOriginalFilename();
-//		File dest = new File("/letsparty-meetup-hub/src/main/resources/uploads" + filename);
-//		file.transferTo(dest);
-//		party.setFilename(filename);
 		
 		// 파티 리더
 		User leader = userMapper.getUserById(leaderId);
@@ -48,8 +46,44 @@ public class partyService {
 		Category category = categoryMapper.getCategoryByNo(partyCreateForm.getCategoryNo());
 		party.setCategory(category);
 		
+		// 헤더 저장
+		// 1. 사용자가 직접 로컬에서 선택한 이미지를 편집하여 등록하는 경우에는 base64 데이터를
+		// 	  디코드하여 파일시스템에 저장하고 파일 이름은 DB에 저장한다.
+		if(partyCreateForm.getImageFile().startsWith(base64Prefix)) {
+			UUID uuid = UUID.randomUUID();
+			String filename = uuid + "editImage.png";
+			
+			String base64 = partyCreateForm.getImageFile();
+			String base64String = base64.replaceAll(base64Prefix, "");
+			
+			byte[] decodeData = base64String.getBytes();
+			
+			Decoder decoder = Base64.getDecoder();
+			
+			
+			byte[] decodeByte = decoder.decode(decodeData);
+					
+			FileOutputStream fos;
+			try {
+				File target = new File("C:\\Users\\jhta\\Desktop\\image\\" + "" + filename);
+				target.createNewFile();
+				fos = new FileOutputStream(target);
+				fos.write(decodeByte);
+				fos.close();
+			} catch (IOException e) {
+				throw new RuntimeException();
+			}
+			
+		// 2. 반면 사용자가 서버에서 제공하는 기본 이미지를 선택했을 때는 저장된 이미지의 파일 이름이 등록.
+		} else {
+			party.setFilename(partyCreateForm.getImageFile());
+		}
+		
 		// 파티 테이블에 파티 추가
 		partyMapper.createParty(party);
+		
+		// 파티 - 게시물 시퀀스 추가
+		partyMapper.createPartySequence(party.getNo());
 		
 		// 가입 조건테이블에 조건 추가
 		// 최소나이 조건 추가

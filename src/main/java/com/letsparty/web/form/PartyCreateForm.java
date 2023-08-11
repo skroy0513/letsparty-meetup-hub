@@ -26,6 +26,6 @@ public class PartyCreateForm {
 	private String birthEnd;
 	private String gender;
 	private String description;
-	private String imageFile; // 이부분 MultiPartFile로 할지 고민
-
+	private String imageFile;
+	
 }

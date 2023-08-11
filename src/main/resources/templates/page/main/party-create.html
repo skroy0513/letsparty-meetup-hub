@@ -24,10 +24,10 @@
                         <!-- 파티 이미지 선택 구간 -->
                         <div class="row">
                             <div id="coverSelect" class="form-group mb-3 row">
-                                <!-- 메인 커버 - 고른 사진 미리보여주는 곳 -->
+                                <!-- 메인 커버 - 선택한 사진을 미리 보여주는 곳이자 실제 삽입될 이미지 -->
                                 <div id="mainCover" class="col-6 mainCover-container">
                                     <div id="result-container" class="col-12" style="margin: auto;">
-										<input type="hidden" id="editedImage" th:field="*{imageFile}" />
+										<input type="hidden" id="imageFile" th:field="*{imageFile}" />
                                         <img class="add-img" id="preview" src="" alt="이미지미리보기">
                                         <div id="result"></div>
                                     </div>
@@ -78,7 +78,7 @@
                                 <label class="form-label">파티</label>
                                 <select class="form-select category-select" required th:field="*{categoryNo}">
                                     <option selected disabled th:value="${0}" > 카테고리를 고르세요.</option>
-                                    <option th:value="${10}" > 취미/동호회</option>
+                                    <option th:selected="${param.catNo} == '10'" th:value="${10}" > 취미/동호회</option>
                                     <option th:value="${20}"> 가족</option>
                                     <option th:value="${30}" > 스터디</option>
                                     <option th:value="${40}" > 학교, 동아리</option>
