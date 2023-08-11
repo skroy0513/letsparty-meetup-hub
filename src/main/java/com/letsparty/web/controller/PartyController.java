@@ -28,8 +28,15 @@ public class PartyController {
 		return "page/party/home";
 	}
 	
-	@GetMapping("attachment")
-	public String poll(){
+	@GetMapping("/{partyNo}/event")
+	public String event(@PathVariable String partyNo) {
+		// partyNo를 사용하여 파티 정보를 조회하고 작업을 수행합니다.
+		return "page/party/event";
+  }
+	
+	@GetMapping("/{partyNo}/attachment")
+	public String attachment(@PathVariable String partyNo){
+		// partyNo를 사용하여 파티 정보를 조회하고 작업을 수행합니다.
 		return"page/party/attachment";
 	}
 }
