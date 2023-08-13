@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
@@ -22,6 +25,8 @@ import com.letsparty.exception.DuplicateEmailException;
 import com.letsparty.exception.DuplicateUserIdException;
 
 import com.letsparty.service.UserService;
+import com.letsparty.vo.Category;
+import com.letsparty.service.CategoryService;
 import com.letsparty.service.PartyService;
 
 import lombok.RequiredArgsConstructor;
@@ -38,6 +43,7 @@ public class MainController {
 	
 	private final UserService userService;
 	private final PartyService partyService;
+	private final CategoryService categoryService;
 
 	@GetMapping("/")
 	public String home() {
@@ -165,9 +171,13 @@ public class MainController {
     
 	// 파티생성폼으로 이동
 	@GetMapping("/party-create")
-	public String partyCreate(Model model) {
+	public String partyCreate(@RequestParam(value="catNo", required=false) Integer catNo, Model model) {
+		// catNo파라미터가 없거나 0보다 작을 경우 루트 페이지로 리다이렉트
+		if (catNo == null || catNo < 0) {
+	        return "redirect:/";
+	    }
 		
-		// 가입 조건 중 나이 반복문을 위한 로직
+		// 가입 조건 나이 선택 목록 반복문
 		LocalDate now = LocalDate.now();
 		int year = now.getYear();
 		List<Integer> birthYears = new ArrayList<>();
@@ -176,17 +186,25 @@ public class MainController {
 		}
 		model.addAttribute("birthYears", birthYears);
 		model.addAttribute("currentYear", year);
-
-		model.addAttribute("partyCreateFrom", new PartyCreateForm());
+		
+		// 카테고리 목록 반복문
+		List<Category> categories = categoryService.getAllCategories();
+		model.addAttribute("categories", categories);
+		
+		// 클릭한 카테고리가 셀렉트 되어있도록 함
+		PartyCreateForm partyCreateForm = new PartyCreateForm();
+		partyCreateForm.setCategoryNo(catNo);
+		
+		model.addAttribute("partyCreateForm", partyCreateForm);
 		
 		return "page/main/party-create";
 	}
 	
 	// 파티생성을 수행
 	@PostMapping("/party-create")
-	public String partyCreate(@AuthenticationPrincipal LoginUser user, PartyCreateForm partyCreateForm) throws IllegalStateException, IOException {
+	public String partyCreate(@AuthenticationPrincipal LoginUser user, PartyCreateForm partyCreateForm) {
 		String leaderId = user.getId();
 		partyService.createParty(partyCreateForm, leaderId);
-		return "redirect:/";
+		return "redirect:/party/1234";
 	}
 }

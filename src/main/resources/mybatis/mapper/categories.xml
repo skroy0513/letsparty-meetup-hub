@@ -11,4 +11,12 @@
 		where
 			category_no = #{value}
 	</select>
+	
+	<!-- 모든 카테고리를 불러오는 쿼리 -->
+	<select id="getAllCategories" resultType="com.letsparty.vo.Category">
+		select
+			category_no			as no,
+			category_name		as name
+		from party_category
+	</select>
 </mapper>
