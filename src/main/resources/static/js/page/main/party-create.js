@@ -8,6 +8,7 @@ $(function() {
     $("#coverlist img:not(#addPhotoSpan img)").click(function() {
         // 마우스포인터가 옮겨가 썸네일 이미지 엘리먼트의 src 속성값을 조회한다.
         let imagepath = $(this).attr("src");
+       	let saveImageName = $(this).attr("name");
         // 위에서 조회한 이미지 경로를 큰 이미지로 표현하는 src의 속성값으로 지정한다.
         $("#mainCover img").attr("src", imagepath);
 
@@ -16,7 +17,7 @@ $(function() {
         $("#result").hide();
         
         // editedImage 대신 defaultImage를 입력 필드에 설정
-    	$("#defaultImage").val(imagepath);
+    	$("#defaultImage").val(saveImageName);
     })
 
     // 사용자가 사진추가 이미지를 눌러 로컬에서 이미지를 선택할 수 있게 하는 스크립트
@@ -113,39 +114,50 @@ $(function() {
 	  // 파티 생성 버튼을 눌렀을 때
 	$('#btn').on('click', function(e) {
 		if ($("#imageFile").val() !== "") {
-		
-			$('#defaultImage').remove();
-		    e.preventDefault(); // 기본 제출 동작을 막음
+	
+		 e.preventDefault(); // 기본 제출 동작을 막음
+		 $('#defaultImage').remove();
 		    // hidden input에서 base64 데이터를 가져옴
 		    let base64Data = $("#imageFile").val();
 		    
-		  
-			let formData = new FormData($('#party-form')[0]);
+			let formData = new FormData($("#party-form")[0]);
 	        let blob = dataURLtoBlob(base64Data);
 	       	// 파일 형태, 파일 이름, 타입 지정
 	        let file = new File([blob], 'image', { type: 'image/png' });
 			// 'imageFile' 필드에 변환된 파일을 추가하고, 쓰이지 않는 input태그 삭제
-	        formData.append('imageFile', file);
+	        formData.append('file', file);
 	        
-	        
-	         // AJAX를 사용하여 폼 데이터 제출
-		    $.ajax({
-		        url: $('#party-form').attr('action'), // 서버 URL
+	        // AJAX를 사용하여 폼 데이터 제출
+		   $.ajax({
+		        url: "/party-create", // 서버 URL
 		        type: 'POST',
 		        data: formData,
 		        processData: false, // jQuery가 데이터를 처리하지 않도록 설정
 		        contentType: false, // 서버로 전송될 컨텐츠 유형을 자동 설정하지 않도록 설정
 		        success: function(response) {
-		            console.log("파티 생성 성공!");
-		            window.location.href = "/party/1234"
+		            $('#imageFile').remove();
+		            let savedName = response.savedName;
+		            //let savedName = 'a0e0fed9-31c1-40e1-ba65-f71490c3243b'; // "uuid" 속성의 값을 변수에 저장
+		            
+		            // 반환값으로 내려온 파일 이름을 저장해서 폼으로 전송한다.
+			        $('<input>').attr({
+			          type: 'hidden',
+			          name: 'savedName',
+			          value: savedName
+			        }).appendTo('#party-form');
+			        
+		            console.log("이미지 업로드 성공!");
+		   			$('#party-form').submit();
 		        },
 		        error: function(jqXHR, textStatus, errorThrown) {
-		            console.log("파티 생성 실패!");
-		            
+		            console.log("이미지 업로드 실패!");
 		        }
 		    })
+		    
+		    // 이미지를 보내고 나머지 파티 정보를 폼으로 제출하기 위해서 필드를 지운다. 
+		    
 	    } else if ($("#defaultImage").val() !== "") {
-	        // '기본 이미지를 사용하는 경우 폼을 일반적인 방식으로 제출
+	        // 기본 이미지를 사용하는 경우 폼 제출 방식으로 전송
 	        $('#imageFile').remove();
 	        $('#party-form').submit();
     	}

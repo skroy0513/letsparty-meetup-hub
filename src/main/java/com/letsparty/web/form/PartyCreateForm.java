@@ -15,19 +15,20 @@ import lombok.Setter;
 @ToString
 public class PartyCreateForm {
 	
-	@Min(value = 10, message = "카테고리를 선택해주세요.")
 	private int categoryNo;
 	
-	@NotBlank(message = "파티이름은 필수 입력값입니다.")
+	@NotBlank(message = "파티 이름은 필수 입력 값입니다.")
 	private String name;
 	
+	@Min(value = 10, message = "최소 정원은 10명 이상입니다.")
 	private int quota;
+	
 	private String birthStart;
 	private String birthEnd;
 	private String gender;
 	private String description;
-	@Nullable
 	private MultipartFile imageFile;
 	private String defaultImagePath;
+	private String savedName;
 	
 }

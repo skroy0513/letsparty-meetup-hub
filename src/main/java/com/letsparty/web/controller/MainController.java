@@ -202,7 +202,28 @@ public class MainController {
 	
 	// 파티생성을 수행
 	@PostMapping("/party-create")
-	public String partyCreate(@AuthenticationPrincipal LoginUser user, PartyCreateForm partyCreateForm) {
+	public String partyCreate(@AuthenticationPrincipal LoginUser user, @Valid PartyCreateForm partyCreateForm,
+							   BindingResult error, Model model) {
+		// 제목이 없거나, 정원 수가 10미만일 때
+		if (error.hasErrors()) {
+			// 가입 조건 나이 선택 목록 반복문
+			LocalDate now = LocalDate.now();
+			int year = now.getYear();
+			List<Integer> birthYears = new ArrayList<>();
+			for (int i = year - 13; i > year - 100; i--) {
+			    birthYears.add(i);
+			}
+			model.addAttribute("birthYears", birthYears);
+			model.addAttribute("currentYear", year);
+			
+			// 카테고리 목록 반복문
+			List<Category> categories = categoryService.getAllCategories();
+			model.addAttribute("categories", categories);
+			
+			model.addAttribute("partyCreateForm", partyCreateForm);
+			
+			return "page/main/party-create";
+		}	
 		String leaderId = user.getId();
 		partyService.createParty(partyCreateForm, leaderId);
 		return "redirect:/party/1234";
