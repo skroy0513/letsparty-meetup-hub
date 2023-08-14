@@ -3,6 +3,7 @@ package com.letsparty.web.form;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
+import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 import groovy.transform.ToString;
@@ -25,6 +26,7 @@ public class PartyCreateForm {
 	private String birthEnd;
 	private String gender;
 	private String description;
+	@Nullable
 	private MultipartFile imageFile;
 	private String defaultImagePath;
 	

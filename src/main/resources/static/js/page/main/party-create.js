@@ -24,26 +24,11 @@ $(function() {
         $('#input').click();
     });
 
-	// base64 -> file 변환 코드
-	function dataURLtoBlob(dataurl) {
-    var base64Data = dataurl.split(',')[1];
-    var byteString = atob(base64Data);
-    var arrayBuffer = new ArrayBuffer(byteString.length);
-    var uint8Array = new Uint8Array(arrayBuffer);
-    for (var i = 0; i < byteString.length; i++) {
-        uint8Array[i] = byteString.charCodeAt(i);
-  	  }
-    return new Blob([uint8Array], { type: 'image/png' });
-	}
-
-	var avatar = document.getElementById('avatar');
 	var $image = $("#image");
   	var $input = $("#input");
   	var $result = $("#result");
   	var $cropbutton = $("#cropbutton");
 
-	var $progress = $('.progress');
-  	var $progressBar = $('.progress-bar');
   	var $alert = $('.alert');
   	var $modal = $('#modal');
  	var cropper;
@@ -62,7 +47,6 @@ $(function() {
     
 	var reader;
     var file;
-    var url;
 	
 	// 이미지 미리보기 
     if (files && files.length > 0) {
@@ -114,26 +98,35 @@ $(function() {
 	    cropper.destroy();
 	    cropper = null;
 	  });
-	  
+
+	// base64 -> file 변환 코드
+	function dataURLtoBlob(dataurl) {
+    var base64Data = dataurl.split(',')[1];
+    var byteString = atob(base64Data);
+    var arrayBuffer = new ArrayBuffer(byteString.length);
+    var uint8Array = new Uint8Array(arrayBuffer);
+    for (var i = 0; i < byteString.length; i++) {
+        uint8Array[i] = byteString.charCodeAt(i);
+  	  }
+    return new Blob([uint8Array], { type: 'image/png' });
+	}	  
 	  // 파티 생성 버튼을 눌렀을 때
 	$('#btn').on('click', function(e) {
-	    e.preventDefault(); // 기본 제출 동작을 막음
-	
-	    // hidden input에서 base64 데이터를 가져옴
-	    let base64Data = $("#imageFile").val();
-	    
-	  
+		if ($("#imageFile").val() !== "") {
+		
+			$('#defaultImage').remove();
+		    e.preventDefault(); // 기본 제출 동작을 막음
+		    // hidden input에서 base64 데이터를 가져옴
+		    let base64Data = $("#imageFile").val();
+		    
+		  
 			let formData = new FormData($('#party-form')[0]);
-	
-	    // base64 데이터가 있는 경우에만 파일로 변환 ajax전송
-	    if (base64Data.startsWith('data:image/png;base64,')) {
-
 	        let blob = dataURLtoBlob(base64Data);
 	       	// 파일 형태, 파일 이름, 타입 지정
 	        let file = new File([blob], 'image', { type: 'image/png' });
 			// 'imageFile' 필드에 변환된 파일을 추가하고, 쓰이지 않는 input태그 삭제
 	        formData.append('imageFile', file);
-	        $('#defaultImage').remove();
+	        
 	        
 	         // AJAX를 사용하여 폼 데이터 제출
 		    $.ajax({
@@ -150,11 +143,11 @@ $(function() {
 		            console.log("파티 생성 실패!");
 		            
 		        }
-		    });
-	    } else {
+		    })
+	    } else if ($("#defaultImage").val() !== "") {
 	        // '기본 이미지를 사용하는 경우 폼을 일반적인 방식으로 제출
 	        $('#imageFile').remove();
 	        $('#party-form').submit();
-	    }
-	});	
-})
+    	}
+    })
+});	
