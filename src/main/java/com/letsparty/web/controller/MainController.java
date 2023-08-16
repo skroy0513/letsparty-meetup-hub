@@ -1,6 +1,5 @@
 package com.letsparty.web.controller;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -168,7 +167,7 @@ public class MainController {
 		
 		return "page/main/signup/complete";
 	}
-    
+	
 	// 파티생성폼으로 이동
 	@GetMapping("/party-create")
 	public String partyCreate(@RequestParam(value="catNo", required=false) Integer catNo, Model model) {
@@ -177,19 +176,7 @@ public class MainController {
 	        return "redirect:/";
 	    }
 		
-		// 가입 조건 나이 선택 목록 반복문
-		LocalDate now = LocalDate.now();
-		int year = now.getYear();
-		List<Integer> birthYears = new ArrayList<>();
-		for (int i = year - 13; i > year - 100; i--) {
-		    birthYears.add(i);
-		}
-		model.addAttribute("birthYears", birthYears);
-		model.addAttribute("currentYear", year);
-		
-		// 카테고리 목록 반복문
-		List<Category> categories = categoryService.getAllCategories();
-		model.addAttribute("categories", categories);
+		addCommonAttributes(model);
 		
 		// 클릭한 카테고리가 셀렉트 되어있도록 함
 		PartyCreateForm partyCreateForm = new PartyCreateForm();
@@ -206,26 +193,29 @@ public class MainController {
 							   BindingResult error, Model model) {
 		// 제목이 없거나, 정원 수가 10미만일 때
 		if (error.hasErrors()) {
-			// 가입 조건 나이 선택 목록 반복문
-			LocalDate now = LocalDate.now();
-			int year = now.getYear();
-			List<Integer> birthYears = new ArrayList<>();
-			for (int i = year - 13; i > year - 100; i--) {
-			    birthYears.add(i);
-			}
-			model.addAttribute("birthYears", birthYears);
-			model.addAttribute("currentYear", year);
-			
-			// 카테고리 목록 반복문
-			List<Category> categories = categoryService.getAllCategories();
-			model.addAttribute("categories", categories);
-			
+			addCommonAttributes(model);
 			model.addAttribute("partyCreateForm", partyCreateForm);
-			
 			return "page/main/party-create";
 		}	
 		String leaderId = user.getId();
 		partyService.createParty(partyCreateForm, leaderId);
 		return "redirect:/party/1234";
 	}
+	
+	private void addCommonAttributes(Model model) {
+	    // 가입 조건 나이 선택 목록 반복문
+	    LocalDate now = LocalDate.now();
+	    int year = now.getYear();
+	    List<Integer> birthYears = new ArrayList<>();
+	    for (int i = year - 13; i > year - 100; i--) {
+	        birthYears.add(i);
+	    }
+	    model.addAttribute("birthYears", birthYears);
+	    model.addAttribute("currentYear", year);
+
+	    // 카테고리 목록 반복문
+	    List<Category> categories = categoryService.getAllCategories();
+	    model.addAttribute("categories", categories);
+	}
+
 }

@@ -9,4 +9,7 @@
 		values
 		(#{party.no}, #{name}, #{value}, #{description})
 	</insert>
+	
+	<!-- 파티 가입 조건 수정 --> 
+	
 </mapper>

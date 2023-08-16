@@ -18,7 +18,7 @@
                         <div class="form-group mb-3 col-12">
                             <label class="form-label">파티명</label>
                             <input th:field="*{name}" type="text" class="form-control form-control-lg"
-                       				th:classappend="${#fields.hasErrors('*{name}') ? 'is-invalid' : ''}" placeholder="파티 이름을 입력해주세요." required />
+                       				th:classappend="${#fields.hasErrors('*{name}') ? 'is-invalid' : ''}" placeholder="파티 이름을 입력해주세요." />
                             <div th:errors="*{name}" th:classappend="${#fields.hasErrors('name') ? 'invalid-feedback' : ''}"></div>
                         </div>
                         <!-- 파티 이미지 선택 구간 -->
@@ -47,25 +47,25 @@
                                             </span>
                                         </div>
                                         <div class="">
-                                            <img class="add-img" src="/images/party/cover-default1.png" name="1" alt="">
+                                            <img class="add-img" src="/images/party/cover-default1.png" name="cover-default1.png" alt="">
                                         </div>
                                         <div class="">
-                                            <img class="add-img" src="/images/party/cover-default2.png" name="2" alt="">
+                                            <img class="add-img" src="/images/party/cover-default2.png" name="cover-default2.png" alt="">
                                         </div>
                                         <div class="">
-                                            <img class="add-img" src="/images/party/cover-default3.png" name="3" alt="">
+                                            <img class="add-img" src="/images/party/cover-default3.png" name="cover-default3.png" alt="">
                                         </div>
                                         <div class="">
-                                            <img class="add-img" src="/images/party/cover-default4.png" name="4" alt="">
+                                            <img class="add-img" src="/images/party/cover-default4.png" name="cover-default4.png" alt="">
                                         </div>
                                         <div class="">
-                                            <img class="add-img" src="/images/party/cover-default5.png" name="5" alt="">
+                                            <img class="add-img" src="/images/party/cover-default5.png" name="cover-default5.png" alt="">
                                         </div>
                                         <div class="">
-                                            <img class="add-img" src="/images/party/cover-default6.png" name="6" alt="">
+                                            <img class="add-img" src="/images/party/cover-default6.png" name="cover-default6.png" alt="">
                                         </div>
                                         <div class="">
-                                            <img class="add-img" src="/images/party/cover-default7.png" name="7" alt="">
+                                            <img class="add-img" src="/images/party/cover-default7.png" name="cover-default7.png" alt="">
                                         </div>
                                     </div>
                                 </div>
@@ -90,7 +90,7 @@
                             <div class="mb-3 col-6">
                                 <label class="form-label">최대정원</label>
                                 <input class="form-control" type="number" min="10" max="1000" 
-                                	step="10" placeholder="최대 1000명" required th:field="*{quota}" th:classappend="${#fields.hasErrors('quota') ? 'is-invalid' : ''}" >
+                                	step="10" placeholder="최대 1000명" th:field="*{quota}" th:classappend="${#fields.hasErrors('quota') ? 'is-invalid' : ''}" />
                             <div th:errors="*{quota}" th:classappend="${#fields.hasErrors('quota') ? 'invalid-feedback' : ''}"></div>
                             </div>
                         </div>

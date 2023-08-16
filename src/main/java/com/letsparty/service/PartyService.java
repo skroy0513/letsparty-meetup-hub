@@ -1,15 +1,7 @@
 package com.letsparty.service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Base64;
-import java.util.Base64.Decoder;
-import java.util.UUID;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.letsparty.mapper.CategoryMapper;
 import com.letsparty.mapper.PartyMapper;
@@ -47,14 +39,10 @@ public class PartyService {
 		Category category = categoryMapper.getCategoryByNo(partyCreateForm.getCategoryNo());
 		party.setCategory(category);
 		
-		if (partyCreateForm.getDefaultImagePath() != null) {
-			party.setFilename(partyCreateForm.getDefaultImagePath());
-		}
-		if (partyCreateForm.getSavedName() != null) {
-			party.setFilename(partyCreateForm.getSavedName());
-		}
+		String filename = (partyCreateForm.getSavedName() != null) ? partyCreateForm.getSavedName() : partyCreateForm.getDefaultImagePath();
+		party.setFilename(filename);
+		log.info("저장하는 이미지의 이름 ====> {}", partyCreateForm.getSavedName());
 		
-		log.info("S3 저장 파일 이름 ====> {}", partyCreateForm.getSavedName());
 		log.info("제목 ====> {}", partyCreateForm.getName());
 		log.info("내용 ====> {}", partyCreateForm.getDescription());
 		log.info("리더 ====> {}", leaderId);
@@ -87,7 +75,11 @@ public class PartyService {
 		partyReq.setValue(partyCreateForm.getGender());
 		partyReq.setDescription("가입할 수 있는 성별");
 		partyReqMapper.insertPartyReq(partyReq);
-		
+	}
+	
+	// 파티 번호로 파티 조회
+	public Party getPartyByNo(int partyNo) {
+		return partyMapper.getPartyByNo(partyNo);
 	}
 	
 }

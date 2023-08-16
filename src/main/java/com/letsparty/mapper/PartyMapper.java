@@ -13,4 +13,10 @@ public interface PartyMapper {
 	// 파티 생성과 동시에 파티 게시물 시퀀스 생성
 	void createPartySequence(int partyNo);
 	
+	// 파티 조회
+	Party getPartyByNo(int partyNo);
+	
+	// 파티 수정
+	void modifyParty(Party party);
+	
 }
