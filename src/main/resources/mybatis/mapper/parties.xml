@@ -4,8 +4,8 @@
 
 	<!-- 파티 생성 -->
 	<insert id="createParty" parameterType="com.letsparty.vo.Party" useGeneratedKeys="true" keyProperty="no">
-	 insert into party (leader_id, category_no, party_name, party_quota, party_description, party_filename)
-     values (#{leader.id}, #{category.no}, #{name}, #{quota}, #{description}, #{filename})
+		 insert into party (leader_id, category_no, party_name, party_quota, party_description, party_filename)
+	     values (#{leader.id}, #{category.no}, #{name}, #{quota}, #{description}, #{filename})
 	</insert>
 	
 	<!-- 파티 시퀀스 추가 -->

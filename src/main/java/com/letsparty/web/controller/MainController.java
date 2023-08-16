@@ -186,7 +186,14 @@ public class MainController {
 	@PostMapping("/party-create")
 	public String partyCreate(@AuthenticationPrincipal LoginUser user, @Valid PartyCreateForm partyCreateForm,
 							   BindingResult error, Model model) {
-		// 제목이 없거나, 정원 수가 10미만일 때
+		int birthStart = Integer.parseInt(partyCreateForm.getBirthStart());
+		int birthEnd = Integer.parseInt(partyCreateForm.getBirthEnd());
+		// 최소나이(birthStart)와 최대나이(birthEnd) 검증
+	    if (birthStart < birthEnd) {
+	        error.rejectValue("birthStart", null, "최소나이는 최대나이보다 적어야 합니다.");
+	    }
+		
+		// 최소나이가 최대나이보다 많거나, 제목이 없거나, 정원 수가 10미만일 때
 		if (error.hasErrors()) {
 			PartyDataUtils.addBirthYearAndCategoryList(model, categoryService);
 			model.addAttribute("partyCreateForm", partyCreateForm);

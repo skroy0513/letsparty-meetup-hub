@@ -105,12 +105,13 @@
                                             <div class="col">
                                                 <div class="row mb-3">
                                                     <label class="col-4 col-form-label" for="birthStart">최소나이</label>
-                                                    <select class="col-8 age-select form-select" th:field="*{birthStart}">
+                                                    <select class="col-8 age-select form-select" th:field="*{birthStart}" th:classappend="${#fields.hasErrors('*{birthStart}') ? 'is-invalid' : ''}">
                                                         <option value="9999" selected>제한없음</option>
 													    <th:block th:each="birthYear : ${birthYears}">
 													        <option th:value="${birthYear}" th:text="|${birthYear}년생 (만 ${currentYear - birthYear}세)|"></option>
 													    </th:block>
                                                     </select>
+                                                    <div th:errors="*{birthStart}" th:classappend="${#fields.hasErrors('birthStart') ? 'invalid-feedback' : ''}"></div>
                                                 </div>
                                                 <div class="row">
                                                     <label class="col-4 col-form-label" for="birthEnd">최대나이</label>
