@@ -2,6 +2,7 @@ package com.letsparty.web.form;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +19,7 @@ public class PartyCreateForm {
 	private int categoryNo;
 	
 	@NotBlank(message = "파티 이름은 필수 입력 값입니다.")
+	@Size(max = 100, message = "파티 이름은 100글자를 넘길 수 없습니다.")
 	private String name;
 	
 	@Min(value = 10, message = "최소 정원은 10명 이상입니다.")
