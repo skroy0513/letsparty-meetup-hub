@@ -13,7 +13,8 @@
                 <div class="card-header card-header-text" style="background-color: rgb(237, 246, 255);">
                     <h5 class="pt-1">파티 정보를 입력하고 수정해보세요!</h5>
                 </div>			
-                <form method="post" id="party-form" th:action="@{/party/{partyNo}/modify(partyNo=${party.no})}" th:object="${partyCreateForm}" enctype="multipart/form-data">
+                <!-- th:object="${partyModifyForm}" 이 부분은 수정 form도 생성폼과 코드가 같다면 form을 합칠 수도 있습니다. -->
+                <form method="post" id="party-form" th:action="@{/party/{partyNo}/modify(partyNo=${party.no})}" th:object="${partyModifyForm}" enctype="multipart/form-data">
                     <div class="card-body">
                         <div class="form-group mb-3 col-12">
                             <label class="form-label">파티명</label>
