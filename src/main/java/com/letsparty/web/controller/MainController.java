@@ -1,9 +1,5 @@
 package com.letsparty.web.controller;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,7 +20,7 @@ import com.letsparty.exception.DuplicateEmailException;
 import com.letsparty.exception.DuplicateUserIdException;
 
 import com.letsparty.service.UserService;
-import com.letsparty.vo.Category;
+import com.letsparty.util.PartyDataUtils;
 import com.letsparty.service.CategoryService;
 import com.letsparty.service.PartyService;
 
@@ -175,9 +171,8 @@ public class MainController {
 		if (catNo == null || catNo < 0) {
 	        return "redirect:/";
 	    }
-		
-		addCommonAttributes(model);
-		
+		PartyDataUtils.addBirthYearAndCategoryList(model, categoryService);
+				
 		// 클릭한 카테고리가 셀렉트 되어있도록 함
 		PartyCreateForm partyCreateForm = new PartyCreateForm();
 		partyCreateForm.setCategoryNo(catNo);
@@ -193,29 +188,13 @@ public class MainController {
 							   BindingResult error, Model model) {
 		// 제목이 없거나, 정원 수가 10미만일 때
 		if (error.hasErrors()) {
-			addCommonAttributes(model);
+			PartyDataUtils.addBirthYearAndCategoryList(model, categoryService);
 			model.addAttribute("partyCreateForm", partyCreateForm);
 			return "page/main/party-create";
 		}	
 		String leaderId = user.getId();
 		int partyNo = partyService.createParty(partyCreateForm, leaderId);
 		return "redirect:/party/" + partyNo;
-	}
-	
-	private void addCommonAttributes(Model model) {
-	    // 가입 조건 나이 선택 목록 반복문
-	    LocalDate now = LocalDate.now();
-	    int year = now.getYear();
-	    List<Integer> birthYears = new ArrayList<>();
-	    for (int i = year - 13; i > year - 100; i--) {
-	        birthYears.add(i);
-	    }
-	    model.addAttribute("birthYears", birthYears);
-	    model.addAttribute("currentYear", year);
-
-	    // 카테고리 목록 반복문
-	    List<Category> categories = categoryService.getAllCategories();
-	    model.addAttribute("categories", categories);
 	}
 
 }
