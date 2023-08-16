@@ -198,8 +198,8 @@ public class MainController {
 			return "page/main/party-create";
 		}	
 		String leaderId = user.getId();
-		partyService.createParty(partyCreateForm, leaderId);
-		return "redirect:/party/1234";
+		int partyNo = partyService.createParty(partyCreateForm, leaderId);
+		return "redirect:/party/" + partyNo;
 	}
 	
 	private void addCommonAttributes(Model model) {

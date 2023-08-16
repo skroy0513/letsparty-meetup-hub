@@ -26,7 +26,7 @@ public class PartyService {
 	private final CategoryMapper categoryMapper;
 	private final PartyReqMapper partyReqMapper;
 	
-	public void createParty(PartyCreateForm partyCreateForm, String leaderId) {	
+	public int createParty(PartyCreateForm partyCreateForm, String leaderId) {	
 		
 		Party party = new Party();
 		BeanUtils.copyProperties(partyCreateForm, party);
@@ -42,10 +42,6 @@ public class PartyService {
 		String filename = (partyCreateForm.getSavedName() != null) ? partyCreateForm.getSavedName() : partyCreateForm.getDefaultImagePath();
 		party.setFilename(filename);
 		log.info("저장하는 이미지의 이름 ====> {}", partyCreateForm.getSavedName());
-		
-		log.info("제목 ====> {}", partyCreateForm.getName());
-		log.info("내용 ====> {}", partyCreateForm.getDescription());
-		log.info("리더 ====> {}", leaderId);
 		
 		// 파티 테이블에 파티 추가
 		partyMapper.createParty(party);
@@ -75,6 +71,11 @@ public class PartyService {
 		partyReq.setValue(partyCreateForm.getGender());
 		partyReq.setDescription("가입할 수 있는 성별");
 		partyReqMapper.insertPartyReq(partyReq);
+		
+		// 리다이렉트를 위한 파티 넘버
+		int partyNo = party.getNo();
+		
+		return partyNo;
 	}
 	
 	// 파티 번호로 파티 조회
