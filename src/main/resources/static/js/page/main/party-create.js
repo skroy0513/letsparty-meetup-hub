@@ -38,6 +38,12 @@ $(function() {
 
 	$input.on('change', function (e) {
 		var files = e.target.files;
+		let size = input.files[0].size / 1024 / 1024;
+        if(size > 30) {
+               alert("이미지 파일 크기가 너무 큽니다. 30MB 이하의 파일을 업로드 해주세요.");
+               $input.value = ""
+               return;
+		}
 		var done = function (url) {
         
 		$input.val("");
@@ -51,7 +57,7 @@ $(function() {
 	
 	// 이미지 미리보기 
     if (files && files.length > 0) {
-      file = files[0];
+		file = files[0];
 
       if (URL) {
         done(URL.createObjectURL(file));

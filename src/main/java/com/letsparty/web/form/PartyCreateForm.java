@@ -19,7 +19,7 @@ public class PartyCreateForm {
 	private int categoryNo;
 	
 	@NotBlank(message = "파티 이름은 필수 입력 값입니다.")
-	@Size(max = 100, message = "파티 이름은 100글자를 넘길 수 없습니다.")
+	@Size(max = 100, message = "파티 이름은 100자를 넘길 수 없습니다.")
 	private String name;
 	
 	@Min(value = 10, message = "최소 정원은 10명 이상입니다.")
@@ -28,7 +28,10 @@ public class PartyCreateForm {
 	private String birthStart;
 	private String birthEnd;
 	private String gender;
+	
+	@Size(max = 255, message = "파티 설명은 255자를 넘길 수 없습니다.")
 	private String description;
+	
 	private MultipartFile imageFile;
 	private String defaultImagePath;
 	private String savedName;
