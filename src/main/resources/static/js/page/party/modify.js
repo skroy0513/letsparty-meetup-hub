@@ -120,7 +120,7 @@ $(function() {
 			
 		    // hidden input에서 base64 데이터를 가져옴
 			let base64Data = $("#imageFile").val();
-			let formData = new FormData($("#party-form")[0]);
+			let formData = new FormData();
 	        let blob = dataURLtoBlob(base64Data);
 	        
 	       	// 파일 형태, 파일 이름, 타입 지정
@@ -129,7 +129,7 @@ $(function() {
 	        
 	       // AJAX를 사용하여 폼 데이터 제출
 			$.ajax({
-		        url:"/party-create", // 서버 URL 실제 커버 업로드는 /upload/cover로
+		        url:"/upload/cover", // 서버 URL 실제 커버 업로드는 /upload/cover로
 		        type: 'POST',
 		        data: formData,
 		        processData: false, // jQuery가 데이터를 처리하지 않도록 설정
@@ -137,11 +137,9 @@ $(function() {
 			}).done(function(response) {
 			    // 이미지를 먼저 S3에 업로드하고 나머지 파티 정보를 폼으로 제출하기 위해 쓰이지 않는 필드를 지운다. 
 				$('#imageFile').remove();
+				
 				let savedName = response.savedName;
-	            // let savedName = 'a0e0fed9-31c1-40e1-ba65-f71490c3243b';
-	            // 42f69fb6-09a6-432d-abd7-f490a60e7b4a
-		            
-	            // 반환값으로 내려온 파일 이름을 저장해서 폼으로 전송한다.
+	            // 업로드 후 반환값으로 내려온 파일 이름을 저장해서 폼으로 전송한다.
 		        $('<input>').attr({
 		          type: 'hidden',
 		          name: 'savedName',
