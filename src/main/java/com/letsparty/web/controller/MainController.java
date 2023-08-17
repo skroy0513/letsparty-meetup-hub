@@ -1,5 +1,6 @@
 package com.letsparty.web.controller;
 
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -10,8 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
+
 import com.letsparty.exception.DuplicateEmailException;
 import com.letsparty.exception.DuplicateUserIdException;
+
 import com.letsparty.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import com.letsparty.web.form.SignupForm;
 
 @Controller
-@RequiredArgsConstructor
+@RequiredArgsConstructor 
 @SessionAttributes("signupForm")
 @Slf4j
 public class MainController {
@@ -150,9 +153,5 @@ public class MainController {
 		
 		return "page/main/signup/complete";
 	}
-    
-	@GetMapping("/party-create")
-	public String partyCreate() {
-		return "page/main/party-create";
-	}
+	
 }
