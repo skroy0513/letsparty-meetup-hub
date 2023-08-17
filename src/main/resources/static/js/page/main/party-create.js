@@ -92,7 +92,7 @@ $(function() {
 			let editedImage = croppedCanvas.toDataURL();
 			
 	        $result.html('');
-	        $result.append(cropper.getCroppedCanvas());
+	        $result.append(croppedCanvas);
 	        $("#imageFile").val(editedImage);
 	        $modal.modal('hide');
 	        
