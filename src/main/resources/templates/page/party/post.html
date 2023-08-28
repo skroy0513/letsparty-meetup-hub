@@ -3,6 +3,7 @@
 <head>
 	<link rel="stylesheet" th:href="@{/css/page/party/place.css}">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+	<link rel="stylesheet" th:href="@{/css/page/party/post.css}" >
 	<script th:src="@{//dapi.kakao.com/v2/maps/sdk.js?appkey=220587205376aa7075ef6e81683508d3&libraries=services,clusterer,drawing}"></script>
 </head>
 <div layout:fragment="content-top" class="content">
@@ -21,11 +22,17 @@
 						<div class="mb-3 col-12">
 							<label class="form-label">게시글 내용</label>
 							<div class="row d-flex justify-content-center" id="text">
-						
-								<textarea class="" style="width: 97%; border-color: rgb(211, 211, 211);" name="post.content"
-									cols="30" rows="10"></textarea>
+								<textarea class="" style="width: 97%; border-color: rgb(211, 211, 211);" name="post.content" cols="30" rows="10"></textarea>
 							</div>
 							<!-- 지도를 첨부했을 때 폼으로 보낼 때 쓰이는 input -->
+							<div>
+								<input id="imageInput" type="file" multiple accept="image/*">
+								<input id="videoInput" type="file" multiple accept="video/*">
+							</div>
+							<div class="media-container">
+								<div class="image-container"></div>
+								<div class="video-container"></div>
+							</div>
 							<div id = "place-input-div">
 							    <input type="hidden" id="place-id" name="place.id" value="" />
 							    <input type="hidden" id="place-name" name="place.placeName" value="" />
@@ -72,6 +79,16 @@
 					</div>
 					<div class="bottom-btns pe-4">
 						<ul class="d-flex justify-content-end gap-4 mb-0">
+							<li class="list-item">
+								<button class="image" id="openimage" type="button">
+									<i class="fa-regular fa-image fa-xl post-item-color"></i>
+								</button>
+							</li>
+							<li class="list-item">
+								<button class="v" id="openvideo" type="button">
+									<i class="fa-solid fa-video fa-xl post-item-color"></i>
+								</button>
+							</li>
 							<li class="list-item">
                               <button class="file" id="openfile" type="button"  data-bs-toggle="modal" data-bs-target="#filemodal">
                                  <i class="fa-regular fa-file fa-xl post-item-color"></i>
@@ -136,5 +153,6 @@
 		</div>
 	</div>
 </div>
+<script layout:fragment="script" th:src="@{/js/page/party/post.js}"></script>
 <script layout:fragment="place-script" th:src="@{/js/page/party/place.js}"></script>
 </html>
