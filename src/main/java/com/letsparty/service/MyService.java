@@ -31,6 +31,12 @@ public class MyService {
 		
 		BeanUtils.copyProperties(userProfileForm, userProfile);
 		
+		UserProfile savedUserProfile = myMapper.getProfileByNo(userProfile.getNo());
+		
+		if (userProfile.getFilename() != savedUserProfile.getFilename()) {
+			userProfile.setIsUrl(false);
+		}
+		
 		myMapper.updateProfile(userProfile);
 	}
 	

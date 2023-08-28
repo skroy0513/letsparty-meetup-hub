@@ -93,6 +93,7 @@ public class SignupController {
 				.nickname(signupForm.getName())
 				.filename("/images/party/profile-default.png")
 				.isDefault(true)
+				.isUrl(true)
 				.build();
 		
 		int profileNo = myService.addProfile(userProfileForm);

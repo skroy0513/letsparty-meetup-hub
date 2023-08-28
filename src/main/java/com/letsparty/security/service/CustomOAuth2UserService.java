@@ -56,6 +56,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 					.nickname(userInfo.getName())
 					.filename(userInfo.getImage())
 					.isDefault(true)
+					.isUrl(true)
 					.build();
 			myMapper.addProfile(userProfile);
 		}
