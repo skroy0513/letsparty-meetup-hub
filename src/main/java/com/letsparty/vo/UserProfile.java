@@ -15,15 +15,17 @@ public class UserProfile {
 	private String nickname;
 	private String filename;
 	private Boolean isDefault;
+	private Boolean isUrl;
 	
 	public UserProfile() {
 	}
 	
 	@Builder
-	public UserProfile(String id, String nickname, String filename, Boolean isDefault) {
+	public UserProfile(String id, String nickname, String filename, Boolean isDefault, Boolean isUrl) {
 		this.id = id;
 		this.nickname = nickname;
 		this.filename = filename;
 		this.isDefault = isDefault;
+		this.isUrl = isUrl;
 	}
 }
