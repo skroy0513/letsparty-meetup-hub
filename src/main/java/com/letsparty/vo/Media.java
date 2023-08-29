@@ -19,6 +19,6 @@ public class Media {
 	private boolean isDeleted;
 	private String name;
 	private String path;
-	private long size;
+	private Long size;
 	private long postId;
 }
