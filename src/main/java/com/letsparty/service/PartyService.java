@@ -10,12 +10,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.letsparty.mapper.CategoryMapper;
+import com.letsparty.mapper.MediaMapper;
 import com.letsparty.mapper.PartyMapper;
 import com.letsparty.mapper.PartyReqMapper;
 import com.letsparty.mapper.PartyTagMapper;
 import com.letsparty.mapper.PlaceMapper;
 import com.letsparty.mapper.UserMapper;
 import com.letsparty.vo.Category;
+import com.letsparty.vo.Media;
 import com.letsparty.vo.Party;
 import com.letsparty.vo.PartyReq;
 import com.letsparty.vo.PartyTag;
@@ -39,6 +41,7 @@ public class PartyService {
 	private final PartyReqMapper partyReqMapper;
 	private final PartyTagMapper partyTagMapper;
 	private final PlaceMapper placeMapper;
+	private final MediaMapper mediaMapper;
 	@Value("${s3.path.covers}")
 	private String coversPath;
 	
@@ -150,13 +153,18 @@ public class PartyService {
 	public void insertPost(PostForm postForm) {
 		Post post = new Post();
 		BeanUtils.copyProperties(postForm.getPost(), post);
-		
 //		게시물 저장 후 반환된 postId가 등록되어야 함
-		long postId = post.getId();
+//		long postId = post.getId();
+		
+		post.setId(1);	// 삭제 필요
 		
 		// 폼에 지도 정보가 있다면 반환받은 게시물 id와 지도 정보 db 저장
 		if (postForm.getPlace().getId() != null && !postForm.getPlace().getId().isBlank()) {
 			insertPlace(postForm, 1);	// 실제 코드 insertPlace(postForm, postId);
+		}
+		// 폼에 사진 및 동영상이 있다면 반환받은 게시물 id와 미디어 정보 db 저장
+		if (postForm.getImageName().size() != 0 || postForm.getVideoName().size() != 0) {
+			insertMedia(postForm.getImageName(), postForm.getVideoName(), post);
 		}
 	}
 	
@@ -193,6 +201,35 @@ public class PartyService {
 		partyReq.setName(name);
 		partyReq.setValue(value);
 		return partyReq;
+	}
+	
+	// 게시물용 미디어 추가 메서드
+	private void insertMedia(List<String> imageList, List<String> videoList, Post post) {
+		System.out.println("게시글의 번호는??");
+		System.out.println(post.getId());
+		List<Media> images = new ArrayList<>();
+		List<Media> videos = new ArrayList<>();
+		for (String imageName : imageList) {
+			Media media = new Media();
+			media.setContentType("image");
+			media.setName(imageName);
+			media.setPostId(post.getId());
+			media.setPartyNo(1);;
+			media.setUser(post.getUser());
+			images.add(media);
+		}
+		mediaMapper.insertMedia(images);
+		
+		for (String videoName : videoList) {
+			Media media = new Media();
+			media.setContentType("video");
+			media.setName(videoName);
+			media.setPostId(post.getId());
+			media.setPartyNo(1);
+			media.setUser(post.getUser());
+			videos.add(media);
+		}
+		mediaMapper.insertMedia(videos);
 	}
 	
 }
