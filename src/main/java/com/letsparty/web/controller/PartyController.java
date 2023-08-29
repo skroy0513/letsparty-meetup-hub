@@ -20,6 +20,8 @@ import com.letsparty.service.PartyService;
 import com.letsparty.util.PartyDataUtils;
 import com.letsparty.vo.Party;
 import com.letsparty.vo.PartyReq;
+import com.letsparty.vo.Post;
+import com.letsparty.vo.User;
 import com.letsparty.web.form.PartyForm;
 import com.letsparty.web.form.PostForm;
 
@@ -137,7 +139,12 @@ public class PartyController {
 	
 	// 게시물 제출
 	@PostMapping("/{partyNo}/post")
-	public String addPost(@PathVariable int partyNo, PostForm postForm) {
+	public String addPost(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, PostForm postForm) {
+		Post post = new Post();
+		User user = new User();
+		user.setId(loginUser.getId());
+		post.setUser(user);
+		postForm.setPost(post);
 		
 		partyService.insertPost(postForm);
 		return "redirect:/party/{partyNo}";
@@ -164,11 +171,5 @@ public class PartyController {
 	public String event(@PathVariable int partyNo) {
 		// partyNo를 사용하여 파티 정보를 조회하고 작업을 수행합니다.
 		return "page/party/event";
-	}
-	
-	@GetMapping("/{partyNo}/post")
-	public String post(@PathVariable int partyNo) {
-		
-		return "page/party/post";
 	}
 }

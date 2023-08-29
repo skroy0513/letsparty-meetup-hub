@@ -12,9 +12,9 @@ import lombok.ToString;
 public class Post {
 	
     private long id;  
-    private int no;  
+    private int no;
     private Party partyNo; 
-    private User userId;
+    private User user;
     private String title; 
     private String content; 
     private int readCnt; 
