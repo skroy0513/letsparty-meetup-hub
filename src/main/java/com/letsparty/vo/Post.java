@@ -13,7 +13,7 @@ public class Post {
 	
     private long id;  
     private int no;
-    private Party partyNo; 
+    private Party party; 
     private User user;
     private String title; 
     private String content; 
