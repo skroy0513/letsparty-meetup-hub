@@ -1,19 +1,17 @@
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layout/common-base}">
-<!-- 고유 CSS -->
 <head>
     <link rel="stylesheet" th:href="@{/css/page/letsparty/home.css}" >
 </head>
-<!-- 고유 content -->
 <div layout:fragment="content-top" class="container">
 	<div class="row mb-3">
         <div class="col-12">
             <div class="card card-line">
-                <div class="card-header" style="background-color: rgb(237, 246, 255);">
+                <div class="card-header">
                     <ul id="letsparty-category" class="nav nav-tabs card-header-tabs" >
                         <li class="nav-item active">
-                            <a href="#" class="nav-link active" aria-current="true">취미/동호회</a>
+                            <a href="#" class="nav-link active">취미/동호회</a>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">가족</a>
@@ -29,6 +27,9 @@
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">지역</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" >재테크</a>
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link" >자유주제</a>
@@ -147,7 +148,7 @@
                         </div>
                        
                         <div class="text-end">
-                            <a id="btn"class="btn btn-primary btn-sm">게시글 등록</a>
+                            <a id="btn"class="btn btn-primary btn-sm" th:href="@{/letsparty/post}">게시글 등록</a>
                         </div>
                    </div>
                 </div>
@@ -155,12 +156,10 @@
         </div>
     </div>
 </div>
-<!-- 모달 등 추가 div가 필요할 경우만 사용 -->
 <div layout:fragment="content-bottom">
 	<div class="modal">
 		<h1>modal영역</h1>
 	</div>
 </div>
-<!-- 고유 script -->
 <script layout:fragment="script" th:src="@{/js/page/letsparty/home.js}"></script>
 </html>
