@@ -32,4 +32,8 @@ public class UserPartyApplicationService {
 		userPartyApplication.setStatus("승인");
 		userPartyApplicationMapper.insert(userPartyApplication);
 	}
+	
+	public UserPartyApplication findByPartyNoAndUserId(int partyNo, String userId) {
+		return userPartyApplicationMapper.findByPartyNoAndUserId(partyNo, userId);
+	}
 }

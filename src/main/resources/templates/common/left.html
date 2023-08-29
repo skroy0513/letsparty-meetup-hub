@@ -1,14 +1,14 @@
 <aside th:fragment="left-fragment" id="info" class="left">
 	<div class="img">
-		<img src="/images/party/cover-default1.png" alt="">
+		<img th:src="${party.filename}" alt="">
 	</div>
 	<div class="info-box">
 		<div class="info">
 			<div class="name">
-				<span>파티명</span>
+				<span th:text="${party.name}">파티명</span>
 			</div>
 			<div class="mem">
-				<p>멤버수 &#183 <span>10</span>명 &nbsp; 리더 &#183 <span>홍길동</span></p>
+				<p>멤버수 &#183 <span>10</span>명 &nbsp; 리더 &#183 <span th:text="${user.userProfile.nickname}">홍길동</span></p>
 			</div>
 		</div>
 		<div class="button">
