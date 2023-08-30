@@ -8,7 +8,7 @@
 				<span th:text="${party.name}">파티명</span>
 			</div>
 			<div class="mem">
-				<p>멤버수 &#183 <span th:text="${memberCnt}">10</span>명 &nbsp; 리더 &#183 <span th:text="${user.userProfile.nickname}">홍길동</span></p>
+				<p>멤버수 &#183 <span th:text="${memberCnt}">10</span>명 &nbsp; 리더 &#183 <span th:text="${leader.userProfile.nickname}">홍길동</span></p>
 			</div>
 		</div>
 		<div class="button">
@@ -18,7 +18,6 @@
 			<div class="setting-box">
 				<a th:href="@{/party/{partyNo}/setting(partyNo=${partyNo})}"><img src="/images/party/settings.png" alt="">파티 설정하기</a>
 			</div>
-			<p th:text="${partyNo}"></p>
 		</div>
 	</div>
 </aside>
