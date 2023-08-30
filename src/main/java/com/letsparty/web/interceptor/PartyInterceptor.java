@@ -11,24 +11,20 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.letsparty.service.PartyService;
 import com.letsparty.service.UserPartyApplicationService;
-import com.letsparty.service.UserService;
 import com.letsparty.vo.Party;
-import com.letsparty.vo.User;
 import com.letsparty.vo.UserPartyApplication;
 
 @Component
 public class PartyInterceptor implements HandlerInterceptor {
 
 	private final PartyService partyService;
-	private final UserService userService;
 	private final UserPartyApplicationService userPartyApplicationService;
 	@Value("${s3.path.covers}")
 	private String coversPath;
 	
 	@Autowired
-	public PartyInterceptor(PartyService partyService, UserService userService, UserPartyApplicationService userPartyApplicationService) {
+	public PartyInterceptor(PartyService partyService,  UserPartyApplicationService userPartyApplicationService) {
 		this.partyService = partyService;
-		this.userService = userService;
 		this.userPartyApplicationService = userPartyApplicationService;
 	}
 
@@ -46,7 +42,10 @@ public class PartyInterceptor implements HandlerInterceptor {
 		
 		UserPartyApplication userPartyApplication = userPartyApplicationService.findByPartyNoAndUserId(partyNo, party.getLeader().getId());
 		System.out.println(userPartyApplication.toString());
+		int memberCnt = userPartyApplicationService.countPartyMemberWithStatus(partyNo, "승인");
 		modelAndView.addObject("party", party);
 		modelAndView.addObject("user", userPartyApplication);
+		modelAndView.addObject("memberCnt", memberCnt);
+		modelAndView.addObject("partyNo", partyNo);
 	}
 }

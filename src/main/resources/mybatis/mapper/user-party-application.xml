@@ -102,6 +102,13 @@
 			</choose>
 			role_no, "userProfile.nickname"
 	</select>
+	
+	<select id="countPartyMemberByPartyNoAndStatus" resultType="int">
+		SELECT COUNT(*)
+		FROM user_party_application
+		WHERE party_no = #{partyNo}
+		AND application_status = #{status};
+	</select>
 
 	<update id="update" parameterType="UserPartyApplication">
 		UPDATE user_party_application
