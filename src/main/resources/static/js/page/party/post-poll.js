@@ -48,11 +48,9 @@ document.addEventListener("DOMContentLoaded", function() {
         `;
 
         if (itemNumber > 3) {
-            // Add event listener to the delete button
             var deleteButton = newItem.querySelector(".delete-item");
             deleteButton.addEventListener("click", function() {
                 pollSubject.removeChild(newItem);
-                // Update the itemCounter
                 itemCounter--;
             });
         }
