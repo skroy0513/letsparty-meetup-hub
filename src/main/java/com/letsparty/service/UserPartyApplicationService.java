@@ -1,9 +1,13 @@
 package com.letsparty.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.letsparty.mapper.UserPartyApplicationMapper;
 import com.letsparty.mapper.UserProfileMapper;
+import com.letsparty.security.user.LoginUser;
+import com.letsparty.vo.Party;
 import com.letsparty.vo.User;
 import com.letsparty.vo.UserPartyApplication;
 import com.letsparty.vo.UserProfile;
@@ -25,7 +29,9 @@ public class UserPartyApplicationService {
 		User user = new User();
 		user.setId(userId);
 		UserPartyApplication userPartyApplication = new UserPartyApplication();
-		userPartyApplication.setPartyNo(partyNo);
+		Party party = new Party();
+		party.setNo(partyNo);
+		userPartyApplication.setParty(party);
 		userPartyApplication.setUser(user);
 		userPartyApplication.setRoleNo(roleNo);
 		userPartyApplication.setUserProfile(userProfile);
@@ -40,4 +46,16 @@ public class UserPartyApplicationService {
 	public int countPartyMemberWithStatus(int partyNo, String status) {
 		return userPartyApplicationMapper.countPartyMemberByPartyNoAndStatus(partyNo, status);
 	}
+
+	public List<UserPartyApplication> findAllByUserId(String userId) {
+		return userPartyApplicationMapper.findAllByUserId(userId);
+	}
+	
+	public boolean isLeader(LoginUser loginUser) {
+		if (loginUser != null && !userPartyApplicationMapper.findAllByUserId(loginUser.getId()).isEmpty()) {
+			return true;
+		}
+		return false;
+	}
+
 }
