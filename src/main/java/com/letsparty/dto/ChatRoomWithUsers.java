@@ -22,4 +22,5 @@ public class ChatRoomWithUsers {
 	private boolean isEssential;
 	private String title;
 	private String description;
+	private String chatUsersText;
 }
