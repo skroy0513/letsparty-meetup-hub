@@ -202,11 +202,5 @@ public class PartyController {
 		return "page/party/event";
   }
 
-	@GetMapping("/{partyNo}/post")
-	public String post(@PathVariable int partyNo) {
-		// partyNo를 사용하여 파티 정보를 조회하고 작업을 수행합니다.
-		return "page/party/post";
-  }
-
 }
 
