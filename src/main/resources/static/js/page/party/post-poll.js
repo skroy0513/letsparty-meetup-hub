@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function() {
     newPoll.classList.add("col-11", "my-1");
 
     var pollAnonymousInput = document.getElementById("poll-anonymous");
-    var pollDuplicateInput = document.getElementById("poll-duplicate");
+    var pollDuplicateInput = document.getElementById("poll-duplicable");
 
     var pollItemsHTML = pollItemContents.map(item => `
         <input type="hidden" value="${item.number}번 : ${item.content}" name="poll_item">
@@ -102,10 +102,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
                 <h6 class="my-1"><strong>${pollTitle}</strong></h6>
                 <div id="poll-delete-btn" class="d-flex justify-content-end">
-	                                            <button class="btn d-flex pb-3 pe-3">
-	                                                <i class="fa-regular fa-circle-xmark fa-xl"></i>
-	                                            </button>
-                                           </div>
+                    <button class="btn d-flex pb-3 pe-3">
+                        <i class="fa-regular fa-circle-xmark fa-xl"></i>
+                    </button>
+               </div>
                 ${pollItemsHTML} <!-- 항목들을 삽입 -->
             </div>
         </div>

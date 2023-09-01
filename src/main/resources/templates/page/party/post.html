@@ -61,16 +61,16 @@
 									</div>
 								</div>
 							</div>
-              	<div id="poll-input-div">
-									  <input type="hidden" id="poll-partyno" name="poll.pArtyNo" value="" /> 
-										<input type="hidden" id="poll-title" name="poll.Tilte" value="" /> 
-										<input type="hidden" id="poll-anonymous" name="poll.Anonymous" value="" />
-										<input type="hidden" id="poll-duplicate" name="poll.Duplicate"value="" />
+              				  <div id="poll-input-div">
+									 	<input type="hidden" id="poll-party-no" name="poll.partyNo" value="" /> 
+										<input type="hidden" id="poll-title" name="poll.title" value="" /> 
+										<input type="hidden" id="poll-anonymous" name="poll.anonymous" value="" />
+										<input type="hidden" id="poll-duplicable" name="poll.duplicable"" value="" />
 							  </div>
 								<div class="my-3" id="poll-short-form">
 									<div class="background-color-gray border-bottom d-flex align-items-center poll-status">
                  	 				
-                 	</div>
+                 					</div>
 								</div>
 							<div class="background-color-gray my-3" id="event">
 								<div class="border d-flex align-items-center">
@@ -161,7 +161,7 @@
 					</div>
 					<div class="modal-footer">
 						<button id="" type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-						<button id="attachButton" type="submit" class="btn btn-primary">첨부</button>
+						<button id=" attachButton" type="submit" class="btn btn-primary">첨부</button>
 					</div>
 				</div>
 			</div>
@@ -199,16 +199,19 @@
 								<div class="option-check">
 									<label for="pollOption1" class="uCheck -checkbox -fs13">
 										<input type="checkbox" id="pollOption1" class="checkInput"
-										bm-bind="postPoll|isSubjectAddible"> <span
-										class="checkLabel"> <span class="shape"></span> <span
-											class="text">익명 투표가능</span>
-									</span>
-									</label> <label for="pollOption2" class="uCheck -checkbox -fs13">
+											bm-bind="postPoll|isSubjectAddible"> 
+										<span class="checkLabel"> 
+											 <span class="shape"></span>
+											 <span class="text">익명 투표가능</span>
+										</span>
+									</label> 
+									<label for="pollOption2" class="uCheck -checkbox -fs13">
 										<input type="checkbox" id="pollOption2" class="checkInput"
-										bm-bind="postPoll|isSubjectAddible"> <span
-										class="checkLabel"> <span class="shape"></span> <span
-											class="text">중복 투표가능</span>
-									</span>
+											bm-bind="postPoll|isSubjectAddible"> 
+										<span class="checkLabel"> 
+											<span class="shape"></span> 
+											<span class="text">중복 투표가능</span>
+										</span>
 									</label>
 								</div>
 							</div>
