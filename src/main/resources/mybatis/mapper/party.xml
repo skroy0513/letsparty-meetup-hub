@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.letsparty.mapper.PartyMapper">
+
+	<!-- 파티 생성 -->
+	<insert id="createParty" parameterType="com.letsparty.vo.Party" useGeneratedKeys="true" keyProperty="no">
+		 insert into party (leader_id, category_no, party_name, party_quota, party_description, party_filename, visibility_status)
+	     values (#{leader.id}, #{category.no}, #{name}, #{quota}, #{description}, #{filename}, #{visibilityStatus})
+	</insert>
+	
+	<!-- 파티 시퀀스 추가 -->
+	<insert id="createPartySequence" parameterType="int">
+		insert into party_sequence values (#{value}, 0)
+	</insert>
+	
+	<!-- 파티 조회 -->
+	<select id="getPartyByNo" parameterType="int" resultType="com.letsparty.vo.Party">
+		select 
+			party_no			as no,
+			leader_id			as "leader.id",
+	        category_no			as "category.no",
+	        party_name			as name,
+	        party_cur_cnt		as curCnt,
+	        party_quota			as quota,
+	        party_status		as status,
+	        updated_at 			as updateAt,
+	        created_at			as createAt,
+	        party_description	as description,
+	        party_filename		as filename,
+	       	visibility_status	as visibilityStatus
+	    from party
+	    where 
+	    	party_no = #{value}
+	</select>
+	
+	<select id="getPartyByNameAndCategoryNo" resultType="com.letsparty.vo.Party">
+		select 
+			party_no			as no,
+			leader_id			as "leader.id",
+	        category_no			as "category.no",
+	        party_name			as name,
+	        party_cur_cnt		as curCnt,
+	        party_quota			as quota,
+	        party_status		as status,
+	        updated_at 			as updateAt,
+	        created_at			as createAt,
+	        party_description	as description,
+	        party_filename		as filename,
+	       	visibility_status	as visibilityStatus
+	    from party
+	    where
+	    	category_no = #{categoryNo} and
+	    	party_name = #{partyName}
+	</select>
+	
+	<!-- 파티 수정 -->
+	<update id="updateParty" parameterType="com.letsparty.vo.Party">
+	    update party
+	    <set>
+	        leader_id = #{leader.id},
+	        category_no = #{category.no},
+	        party_name = #{name},
+	        party_cur_cnt = #{curCnt},
+	        party_quota = #{quota},
+	        party_status = #{status},
+	        visibility_status = #{visibilityStatus},
+	        updated_at = NOW(),
+	        <if test="description != null">
+		        party_description = #{description},
+	        </if>
+	        party_filename = #{filename}
+	    </set>
+	    where party_no = #{no}
+	</update>
+
+</mapper>

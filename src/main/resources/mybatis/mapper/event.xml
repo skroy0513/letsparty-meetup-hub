@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.letsparty.mapper.EventMapper">
+	
+	<insert id="insertEvent" parameterType="com.letsparty.vo.Event" useGeneratedKeys="true" keyProperty="no">
+		
+		insert into event
+			(event_title, event_description, is_all_day, event_start_date, 
+			 event_start_time, event_end_date, event_end_time, event_status, user_id,
+			 place_no, post_id, party_no)
+		values
+			(#{title}, #{description}, #{allDay}, 
+			#{startDate}, #{startTime}, #{endDate}, #{endTime},
+			#{status}, #{user.id}, null, null, 1)
+	</insert>
+	
+	<select id="getAllEvents" resultType="com.letsparty.vo.Event">
+		select
+			event_no 			as no,
+			event_title			as title,
+			event_description 	as description,
+			is_all_day			as allDay,
+			event_start_date	as startDate,
+			event_start_time	as startTime,
+			event_end_date		as endDate,
+			event_end_time		as endTime,
+			event_status		as status
+		from 
+			event
+		order by 
+			event_no asc
+	
+	</select>
+	
+	<select id="getEventByNo" parameterType="int" resultType="com.letsparty.vo.Event">
+		select
+			event_no 			as no,
+			event_title			as title,
+			event_description 	as description,
+			is_all_day			as allDay,
+			event_start_date	as startDate,
+			event_start_time	as startTime,
+			event_end_date		as endDate,
+			event_end_time		as endTime,
+			event_status		as status
+		from 
+			event
+		where 
+			event_no = #{value}
+	</select>
+	
+	<select id="getEventByPartyNo" parameterType="int" resultType="com.letsparty.vo.Event">
+		SELECT
+			event_no 			as no,
+			event_title			as title,
+			event_description 	as description,
+			is_all_day			as allDay,
+			event_start_date	as startDate,
+			event_start_time	as startTime,
+			event_end_date		as endDate,
+			event_end_time		as endTime,
+			event_status		as status
+		FROM event
+		WHERE
+			party_no = #{value} AND 
+			(event_start_date > CURDATE() OR event_start_date = CURDATE() AND COALESCE(event_start_time, '24:00') >= CURTIME()) AND 
+			event_start_date &lt; DATE_ADD(CURDATE(), INTERVAL 15 DAY)
+		ORDER BY event_start_date, event_start_time
+		LIMIT 5;
+	</select>
+	
+	<delete id="deleteEvent" parameterType="int">
+		delete from
+			event
+		where 
+			event_no = #{value}
+	</delete>
+</mapper>

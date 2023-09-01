@@ -1,5 +1,7 @@
 package com.letsparty.web.form;
 
+import java.util.List;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -9,11 +11,13 @@ import org.springframework.web.multipart.MultipartFile;
 import groovy.transform.ToString;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Setter
 @ToString
-public class PartyCreateForm {
+@Slf4j
+public class PartyForm {
 	
 	private int categoryNo;
 	
@@ -27,6 +31,7 @@ public class PartyCreateForm {
 	private String birthStart;
 	private String birthEnd;
 	private String gender;
+	private int visibilityStatus;
 	
 	@Size(max = 255, message = "파티 설명은 255자를 넘길 수 없습니다.")
 	private String description;
@@ -34,5 +39,7 @@ public class PartyCreateForm {
 	private MultipartFile imageFile;
 	private String defaultImagePath;
 	private String savedName;
+	
+	private List<String> tags;
 	
 }

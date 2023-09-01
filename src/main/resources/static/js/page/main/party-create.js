@@ -1,9 +1,14 @@
 $(function() {
     let randomImageIndex = Math.floor(Math.random() * 7) + 1;
     // 페이지 로딩 완료 후 실행 로드 되자마자 랜덤 이미지를 선택하게 함
-    let defaultImageSrc = $("#coverlist img:eq("+randomImageIndex+")").attr('src');  // coverlist 내의 랜덤index에 해당하는 이미지를 가져옴
-    $('#mainCover img').attr('src', defaultImageSrc);  // mainCover의 img 태그의 src에 랜덤으로 선택된 이미지의 src를 설정
-
+    let randomImage = $("#coverlist img:eq("+randomImageIndex+")");
+    
+    // mainCover에 랜덤으로 선택된 이미지의 src를 설정
+	$('#mainCover img').attr('src', randomImage.attr('src'));
+	
+	// 필드에 랜덤으로 선택된 이미지의 name 속성을 설정
+	$("#defaultImage").val(randomImage.attr('name'));
+	
     // 사용자가 사이트에서 기본으로 제공되는 이미지를 클릭했을 때의 스크립트
     $("#coverlist img:not(#addPhotoSpan img)").click(function() {
         // 마우스포인터가 옮겨가 썸네일 이미지 엘리먼트의 src 속성값을 조회한다.
@@ -16,6 +21,8 @@ $(function() {
         $("#preview").show();
         $("#result").hide();
         
+        // 편집된 이미지 정보 비우기        
+        $("#imageFile").val("");
         // editedImage 대신 defaultImage를 입력 필드에 설정
     	$("#defaultImage").val(saveImageName);
     })
@@ -29,26 +36,32 @@ $(function() {
   	var $input = $("#input");
   	var $result = $("#result");
   	var $cropbutton = $("#cropbutton");
-
-  	var $alert = $('.alert');
   	var $modal = $('#modal');
  	var cropper;
-
-	$('[data-toggle="tooltip"]').tooltip();
-
+ 	
 	$input.on('change', function (e) {
 		var files = e.target.files;
 		let size = input.files[0].size / 1024 / 1024;
+		let reg = /(.*?)\.(jpg|png)$/;
+		
+		// 확장자 검증
+	  	if(!files[0].name.match(reg)) {
+			alert("JPG, PNG 확장자 파일만 업로드 가능합니다.");
+			$input.value = ""
+			return;
+		}
+		
+		// 파일 크기 검증
         if(size > 30) {
                alert("이미지 파일 크기가 너무 큽니다. 30MB 이하의 파일을 업로드 해주세요.");
                $input.value = ""
                return;
 		}
+		
 		var done = function (url) {
         
 		$input.val("");
 		$image.attr("src", url);
-     	$alert.hide();
      	$modal.modal('show');
     };
     
@@ -74,26 +87,32 @@ $(function() {
 	// 사진 편집 모달
 	$modal.on('shown.bs.modal', function () {
 		cropper = new Cropper(image, {
+			// 크롭 box 설정
 			aspectRatio: 6/5,
-    		viewMode: 2,
+    		viewMode: 1,
 			minContainerHeight: 600,
-      		zoomable: false,
+      		zoomable: true,
       		cropBoxResizable: false,
       		dragMode: 'move',
-
-			data: {
-        		width: 300,
-        		height: 250,
-			},
+      		background: false
 		});
     
 		$cropbutton.on("click", function() {
-			let croppedCanvas = cropper.getCroppedCanvas();
+			let croppedCanvas;
+			if (cropper) {
+				// 최종적으로 여러 옵션을 지정해서 얻게 될 편집 이미지
+				croppedCanvas = cropper.getCroppedCanvas({
+					width: 300,
+					height: 250,
+				});
+			}
 			let editedImage = croppedCanvas.toDataURL();
-			
+
 	        $result.html('');
 	        $result.append(croppedCanvas);
 	        $("#imageFile").val(editedImage);
+	        // 기본 이미지 설정 정보 비우기
+	        $("#defaultImage") .val("");
 	        $modal.modal('hide');
 	        
 	        // result를 보이게 하고, preview를 숨긴다.
@@ -106,7 +125,7 @@ $(function() {
 	    cropper = null;
 	});
 
-	// base64 -> file 변환 코드
+	// base64 -> file 변환 함수
 	function dataURLtoBlob(dataurl) {
     var base64Data = dataurl.split(',')[1];
     var byteString = atob(base64Data);
@@ -116,9 +135,34 @@ $(function() {
         uint8Array[i] = byteString.charCodeAt(i);
   	  }
     return new Blob([uint8Array], { type: 'image/png' });
-	}	  
+	}	 
+	
+	// 파티 태그 추출 함수
+	function extractHashTags(description) {
+    var regex = /#[^\s#]+/g;
+    var match;
+    var tags = [];
+
+    while ((match = regex.exec(description)) !== null) {
+        tags.push(match[0].substring(1)); // #제거하고 태그만 추출
+    }
+    return [...new Set(tags)]; // tags의 값을 Set객체에 담아 중복 태그를 없앤 후 다시 값(태그)들을 펼쳐 배열에 저장
+}
+
 	  // 파티 생성 버튼을 눌렀을 때
 	$('#btn').on('click', function(e) {
+		var description = $('#description').val();
+		var tags = extractHashTags(description);
+		
+		// 각 태그마다 입력 필드를 만들어 값으로 대입
+		$.each(tags, function(index, tag){
+			$('<input>').attr({
+				type: 'hidden',
+				name: 'tags',
+				value: tag
+			}).appendTo('#party-form');
+			
+		})
 		if ($("#imageFile").val() !== "") {
 			e.preventDefault();
 			// 쓰이지 않는 필드 삭제
@@ -135,7 +179,7 @@ $(function() {
 	        
 	       // AJAX를 사용하여 폼 데이터 제출
 			$.ajax({
-		        url:"/upload/cover", // 서버 URL 실제 커버 업로드는 /upload/cover로
+		        url:"/upload/cover",
 		        type: 'POST',
 		        data: formData,
 		        processData: false, // jQuery가 데이터를 처리하지 않도록 설정

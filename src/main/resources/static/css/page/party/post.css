@@ -97,3 +97,84 @@ color: rgb(194, 225, 255);
 .selected-item {
     background-color: #007BFF;  /* Bootstrap의 파란색 코드입니다. 원하는 색상으로 변경 가능합니다. */
 }
+
+/* 미디어 첨부 */
+.media-container i {
+	color: #999;
+}
+.media-container .image-container {
+    margin: auto;
+    display: flex;
+    width: 90%;
+    gap: 5%;
+    flex-wrap: wrap;
+    margin-top: 3%;
+}
+.image-container .image-item {
+    position: relative;
+    width: 30%;
+    margin-bottom: 3%;
+}
+.image-item img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.image-item i {
+    position: absolute;
+    font-size: 1.5em;
+    top: 5px;
+    left: 5px;
+    z-index: 0;
+    cursor: pointer;
+}
+.video-item .cancel {
+    position: absolute;
+    font-size: 1.5em;
+    top: 5px;
+    left: 5px;
+    z-index: 0;
+    cursor: pointer;
+}
+.image-item::after {
+    content: "";
+    display: block;
+    padding-top: 100%;
+}
+
+.media-container .video-container {
+    display: flex;
+    margin: auto;
+    width: 90%;
+    gap: 5%;
+    flex-wrap: wrap;
+}
+.video-container .video-item {
+    position: relative;
+    width: 30%;
+    margin-bottom: 3%;
+}
+.video-item video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(50%);
+}
+.video-item i {
+    position: absolute;
+    font-size: 5em;
+    top: calc(50% - 0.5em);
+    left: calc(50% - 0.5em);
+    z-index: 0;
+}
+.video-item::after{
+    content: "";
+    display: block;
+    padding-top: 100%;
+}
