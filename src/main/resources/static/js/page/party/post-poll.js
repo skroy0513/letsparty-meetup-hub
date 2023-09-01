@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    var openPollBtn = document.getElementById("open-poll");
+    var openPollBtn = document.getElementById("openpoll");
     var pollModal = document.getElementById("poll-modal");
     var pollTitleInput = document.querySelector(".titleWrap input"); // 투표 제목 입력란
     var pollSubject = document.querySelector(".poll-subject"); // 항목을 추가할 컨테이너
@@ -58,8 +58,8 @@ document.addEventListener("DOMContentLoaded", function() {
         return newItem;
     }
 
-    var attachButton = document.getElementById("attachButton");
-		attachButton.addEventListener("click", function() {
+    var attachPollButton = document.getElementById("poll-attachment-button"); // 첨부 버튼
+		attachPollButton.addEventListener("click", function() {
     var pollTitle = document.getElementById("pollTitle").value;
     var pollItemsInputs = document.querySelectorAll(".inputItem"); // 항목 input 요소들을 선택
     var pollItemsValues = Array.from(pollItemsInputs).map(input => input.value); // 항목 값들을 배열로 추출
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var modal = bootstrap.Modal.getInstance(pollModal);
     modal.hide();
     
-    var pollDeleteButton = newPoll.querySelector(".poll-delete-btn");
+   	var pollDeleteButton = newPoll.querySelector("#poll-delete-btn");
         pollDeleteButton.addEventListener("click", function() {
             // 해당 투표 영역을 삭제
             pollStatusDiv.removeChild(newPoll);
