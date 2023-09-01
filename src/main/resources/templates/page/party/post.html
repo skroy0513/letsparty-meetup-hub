@@ -64,8 +64,8 @@
               				  <div id="poll-input-div">
 									 	<input type="hidden" id="poll-party-no" name="poll.partyNo" value="" /> 
 										<input type="hidden" id="poll-title" name="poll.title" value="" /> 
-										<input type="hidden" id="poll-anonymous" name="poll.anonymous" value="" />
-										<input type="hidden" id="poll-duplicable" name="poll.duplicable"" value="" />
+										<input type="hidden" id="poll-is-anonymous" name="poll.isAnonymous" value="" />
+										<input type="hidden" id="poll-is-duplicable" name="poll.isDuplicable"" value="" />
 							  </div>
 								<div class="my-3" id="poll-short-form">
 									<div class="background-color-gray border-bottom d-flex align-items-center poll-status">
@@ -197,16 +197,16 @@
 									<i class="fa-sharp fa-solid fa-plus"></i> 항목 추가
 								</button>
 								<div class="option-check">
-									<label for="pollOption1" class="uCheck -checkbox -fs13">
-										<input type="checkbox" id="pollOption1" class="checkInput"
+									<label for="poll-anonymous-option" class="uCheck -checkbox -fs13">
+										<input type="checkbox" id="anonymous-option" class="checkInput"
 											bm-bind="postPoll|isSubjectAddible"> 
 										<span class="checkLabel"> 
 											 <span class="shape"></span>
 											 <span class="text">익명 투표가능</span>
 										</span>
 									</label> 
-									<label for="pollOption2" class="uCheck -checkbox -fs13">
-										<input type="checkbox" id="pollOption2" class="checkInput"
+									<label for="poll-duplicable-option" class="uCheck -checkbox -fs13">
+										<input type="checkbox" id="duplicable-option" class="checkInput"
 											bm-bind="postPoll|isSubjectAddible"> 
 										<span class="checkLabel"> 
 											<span class="shape"></span> 

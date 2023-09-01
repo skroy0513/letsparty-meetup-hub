@@ -6,8 +6,8 @@ document.addEventListener("DOMContentLoaded", function() {
     var addItemButton = document.querySelector(".add-item");
     var itemCounter = 3; // 초기 항목 개수
 
-	var pollAnonymusCheckbox = document.getElementById("pollOption1");
-    var pollDuplicableCheckbox = document.getElementById("pollOption2");
+	var pollAnonymusCheckbox = document.getElementById("anonymous-option");
+    var pollDuplicableCheckbox = document.getElementById("duplicable-option");
     
     openPollBtn.onclick = function() {
         // 모달 열 때마다 내용 초기화
@@ -79,8 +79,8 @@ document.addEventListener("DOMContentLoaded", function() {
     var newPoll = document.createElement("div");
     newPoll.classList.add("col-11", "my-1");
 
-    var pollAnonymousInput = document.getElementById("poll-anonymous");
-    var pollDuplicateInput = document.getElementById("poll-duplicable");
+    var pollAnonymousInput = document.getElementById("poll-is-anonymous");
+    var pollDuplicateInput = document.getElementById("poll-is-duplicable");
 
     var pollItemsHTML = pollItemContents.map(item => `
         <input type="hidden" value="${item.number}번 : ${item.content}" name="poll_item">
