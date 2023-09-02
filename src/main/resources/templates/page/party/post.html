@@ -2,6 +2,7 @@
 	layout:decorate="~{layout/party-home-base}">
 <head>
 	<link rel="stylesheet" th:href="@{/css/page/party/place.css}">
+	<link rel="stylesheet" th:href="@{/css/page/party/post-poll.css}">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 	<link rel="stylesheet" th:href="@{/css/page/party/post.css}" >
 	<script th:src="@{//dapi.kakao.com/v2/maps/sdk.js?appkey=220587205376aa7075ef6e81683508d3&libraries=services,clusterer,drawing}"></script>
@@ -60,6 +61,17 @@
 									</div>
 								</div>
 							</div>
+							<div id="poll-input-div">
+									 	<input type="hidden" id="poll-party-no" name="poll.partyNo" value="" /> 
+										<input type="hidden" id="poll-title" name="poll.title" value="" /> 
+										<input type="hidden" id="poll-is-anonymous" name="poll.isAnonymous" value="" />
+										<input type="hidden" id="poll-is-duplicable" name="poll.isDuplicable" value="" />
+						  	</div>
+								<div class="my-3" id="poll-short-form">
+									<div class="background-color-gray border-bottom d-flex align-items-center poll-status">
+                 	 				
+                 					</div>
+								</div>
 							<div class="background-color-gray my-3" id="event">
 								<div class="border d-flex align-items-center">
 									<div class="col-1 me-1 ms-1 d-flex justify-content-center align-items-center">
@@ -101,7 +113,7 @@
                               </button>
                            </li>
                            <li class="list-item">
-                              <button class="poll" id="openpoll" type="button"  data-bs-toggle="modal" data-bs-target="#pollmodal">
+                              <button class="poll" id="openpoll" type="button"  data-bs-toggle="modal" data-bs-target="#poll-modal">
                                  <i class="fa-solid fa-square-poll-horizontal fa-xl post-item-color"></i>
                               </button>
                            </li>
@@ -152,8 +164,68 @@
 				</div>
 			</div>
 		</div>
+		 <!-- 투표모달 -->
+			<div class="modal fade" id="poll-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="modalLabel">투표 첨부</h5>
+						</div>
+						<div class="bar"></div>
+						<div class="modal-body">
+							<div class="poll_wrap">
+								<div class="titleWrap">
+									<input type="text" id="pollTitle" maxlength="200" value=""
+										placeholder="투표 제목">
+								</div>
+								<div class="poll-list">
+									<ul class="poll-subject">
+										<li class="poll-item"><span class="item-number"></span> <input
+											type="text" class="inputItem" maxlength="200" value=""
+											name="poll_item" placeholder="항목 입력"></li>
+										<li class="poll-item"><span class="item-number"></span> <input
+											type="text" class="inputItem" maxlength="200" value=""
+											name="poll_item" placeholder="항목 입력"></li>
+										<li class="poll-item"><span class="item-number"></span> <input
+											type="text" class="inputItem" maxlength="200" value=""
+											name="poll_item" placeholder="항목 입력"></li>
+									</ul>
+								</div>
+								<button class="add-item">
+									<i class="fa-sharp fa-solid fa-plus"></i> 항목 추가
+								</button>
+								<div class="option-check">
+									<label for="poll-anonymous-option" class="uCheck -checkbox -fs13">
+										<input type="checkbox" id="anonymous-option" class="checkInput"
+											bm-bind="postPoll|isSubjectAddible"> 
+										<span class="checkLabel"> 
+											 <span class="shape"></span>
+											 <span class="text">익명 투표가능</span>
+										</span>
+									</label> 
+									<label for="poll-duplicable-option" class="uCheck -checkbox -fs13">
+										<input type="checkbox" id="duplicable-option" class="checkInput"
+											bm-bind="postPoll|isSubjectAddible"> 
+										<span class="checkLabel"> 
+											<span class="shape"></span> 
+											<span class="text">중복 투표가능</span>
+										</span>
+									</label>
+								</div>
+							</div>
+						</div>
+						<div class="bar"></div>
+						<div class="modal-footer">
+							<button id="" type="button" class="btn btn-secondary"
+								data-bs-dismiss="modal">취소</button>
+							<button id="poll-attachment-button" type="submit" class="btn btn-primary">첨부</button>
+						</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 <script layout:fragment="script" th:src="@{/js/page/party/post.js}"></script>
 <script layout:fragment="place-script" th:src="@{/js/page/party/place.js}"></script>
+<script layout:fragment="poll-script" th:src="@{/js/page/party/post-poll.js}"></script>
 </html>

@@ -178,9 +178,29 @@ public class PartyController {
 		return"page/party/attachment";
 	}
 	
+	@GetMapping("/{partyNo}/album")
+	public String album(@PathVariable int partyNo){
+		// partyNo를 사용해서 파티첨부파일을 조회하고 작업을 수행합니다.
+		return"page/party/album";
+	}
+	
+	@GetMapping("/{partyNo}/file")
+	public String file(@PathVariable int partyNo){
+		// partyNo를 사용해서 파티첨부파일을 조회하고 작업을 수행합니다.
+		return"page/party/file";
+	}
+	
+	@GetMapping("/{partyNo}/poll")
+	public String poll(@PathVariable int partyNo){
+		// partyNo를 사용해서 파티첨부파일을 조회하고 작업을 수행합니다.
+		return"page/party/poll";
+	}
+	
 	@GetMapping("/{partyNo}/event")
 	public String event(@PathVariable int partyNo) {
 		// partyNo를 사용하여 파티 정보를 조회하고 작업을 수행합니다.
 		return "page/party/event";
-	}
+  }
+
 }
+
