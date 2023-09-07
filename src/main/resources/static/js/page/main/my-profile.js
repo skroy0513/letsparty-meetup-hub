@@ -1,14 +1,46 @@
+let $save = $("#save");
 let $approve = $("#approve");
-let $change = $("#change");
+let $delete = $("#delete");
 let avatar = document.getElementById('avatar');
 let image = document.getElementById('image');
 let input = document.getElementById('input');
 let $modal = $('#modal');
+let $pfChange = $("#pf-change");
 let cropper;
 let $cancel = $("#cancel");
 let $profileForm = $("#profile-form")
+let $partyProfileChange = $("#party-profile-change")
 let isChanged = false;
-console.log(avatar.src);
+let staticBackdropLabel = document.getElementById('staticBackdrop')
+let profileNo;
+let img;
+let $img = $("#change-img");
+
+avatar.addEventListener("click", function() {
+	$("#input").click();
+})
+
+staticBackdropLabel.addEventListener('show.bs.modal', event => {
+	profileNo = event.relatedTarget.getAttribute('data')
+	if (profileNo == 0){
+		avatar.src = "/images/party/profile-default.png";
+		$("#approve").text("추가");
+		$("#pf-change").attr("action", "/my/add-my-profile");
+		$("#delete").remove();
+	} else {
+		$("#pf-change").attr("action", "/my/change-my-profile");
+		let count = $(event.relatedTarget).parent().prev().children().length;
+		let nick = $("#pf-nickname" + profileNo).text();
+		$("#nick").val(nick);
+		img = $("#pf-show" + profileNo).attr("src");
+		if (count == 2) {
+			$("#default").prop('checked', true);
+		} else {
+			$("#default").prop('checked', false);
+		}
+		avatar.src = img;
+	}
+})
 
 // b64데이터를 Blob객체로 변환하는 함수
 function b64toBlob(b64Data, contentType = '') {
@@ -27,35 +59,29 @@ function b64toBlob(b64Data, contentType = '') {
 }
 
 // 프로필 변경을 하지 않을 경우
-$cancel.on("click", function(){
+$cancel.on("click", function() {
 	// 홈화면으로 돌아간다
 	window.location = "/";
 })
 
-// 사진변경 버튼을 누를 경우
-$change.on("click", function(){
-	// <input type="file">을 실행한다.
-	input.click();
-})
-
 // 사진 파일을 변경할 시 나타나는 이벤트
-input.addEventListener('change', function (e) {
+input.addEventListener('change', function(e) {
 	let files = e.target.files;
 	let size = input.files[0].size / 1024 / 1024;
 	// 파일 사이즈가 큰 경우
-	if(size > 30) {
+	if (size > 30) {
 		alert("이미지 파일 크기가 너무 큽니다. 30MB 이하의 파일을 업로드 해주세요.");
 		input.value = "";
 		return;
 	}
-	
+
 	// 파일 사이즈가 크지 않은 경우 사진 편집 창을 연다.
-	let done = function (url) {
+	let done = function(url) {
 		input.value = '';
 		image.src = url;
 		$modal.modal('show');
 	};
-	
+
 	let reader;
 	let file;
 
@@ -66,8 +92,8 @@ input.addEventListener('change', function (e) {
 			done(URL.createObjectURL(file));
 		} else if (FileReader) {
 			reader = new FileReader();
-			reader.onload = function () {
-			done(reader.result);
+			reader.onload = function() {
+				done(reader.result);
 			};
 			reader.readAsDataURL(file);
 		}
@@ -75,7 +101,7 @@ input.addEventListener('change', function (e) {
 });
 
 // 모달 창을 열고 닫는다.
-$modal.on('shown.bs.modal', function () {
+$modal.on('shown.bs.modal', function() {
 	// Cropper 생성(옵션값)
 	cropper = new Cropper(image, {
 		aspectRatio: 1,
@@ -85,13 +111,13 @@ $modal.on('shown.bs.modal', function () {
 		dragMode: 'move',
 		background: false
 	});
-}).on('hidden.bs.modal', function () {
+}).on('hidden.bs.modal', function() {
 	cropper.destroy();
 	cropper = null;
 });
 
 // 사진 편집 창에서 "자르기"버튼을 누른 경우
-document.getElementById('crop').addEventListener('click', function () {
+document.getElementById('crop').addEventListener('click', function() {
 	let canvas;
 
 	// 편집 창을 닫는다.
@@ -109,20 +135,22 @@ document.getElementById('crop').addEventListener('click', function () {
 });
 
 
-$approve.on("click", function(){
-	let src = avatar.src;	
+$approve.on("click", function() {
+	console.log(profileNo)
+	let src = avatar.src;
+	$("#profile-no").val(profileNo);
 	// 사진이 변경된 경우
 	if (isChanged) {
 		console.log(isChanged);
 		// 미리보기 이미지의 src를 b64데이터에서 Blob객체로 변환
 		let blob = b64toBlob(src, 'image/png');
-		
+		$("#pf-nick" + profileNo).val(nick);
 		// Blob객체를 image.png 파일로 변환
-		let file = new File([blob], "image", {type : "image/png"});
+		let file = new File([blob], "image", { type: "image/png" });
 		// 새로운 폼객체 생성후 이미지 파일 첨부
 		let formdata = new FormData();
 		formdata.append("file", file);
-		
+
 		// ajax로 파일을 S3로 전송후 nanoid 발급
 		$.ajax({
 			url: "/upload/profile",
@@ -130,37 +158,64 @@ $approve.on("click", function(){
 			data: formdata,
 			processData: false,
 			contentType: false
-		}).done(function(response){
+		}).done(function(response) {
 			// S3에서 제공하는 nanoid
 			let savedName = response.savedName;
-			// 새로운 <input>태그를 만들어서 nanoid를 필드로 삽입 
-			$("<input>").attr({
-				type: "hidden",
-				name: "filename",
-				value: savedName
-			}).appendTo($profileForm);
-
 			$("<input>").attr({
 				type: "hidden",
 				name: "isUrl",
-				value: false
-			}).appendTo($profileForm);
+				value: false,
+			}).appendTo($pfChange);
+			$("#input").prop("type", "text").val(savedName)
 			
-			// 기본 프로필 이미지가 저장된 필드 삭제
-			input.remove();
-			
+			$pfChange.submit();
+
 			console.log("이미지 업로드 성공");
-			
-			$profileForm.submit();
-			
-		}).fail(function(){
+
+		}).fail(function() {
 			console.log("이미지 업로드 실패")
 		})
 		// 사진을 변경하지 않은 경우
 	} else {
 		console.log(isChanged);
-		// input의 타입을 file에서 text롭 변환해서 파일명을 그대로 저장한다.
-		input.type = "text";
-		$profileForm.submit();
+		// input의 타입을 file에서 text로 변환해서 파일명을 그대로 저장한다.
+		document.querySelector("#input").type = "text";
+		$("#input").val(" ");
+		$("#pf-nick" + profileNo).val(nick);
+		$pfChange.submit();
 	}
+})
+
+$delete.on("click", function(){
+	if(confirm("프로필을 삭제하시겠습니까?")){
+		if ($(":checkbox").prop("checked")){
+			console.log("기본값 설정이라 삭제 안됨")
+			alert("기본 프로필은 삭제할 수 없습니다.")
+		}
+		else {
+			console.log("삭제")
+			let formdata = new FormData();
+			formdata.append("text", profileNo);
+			
+			$.ajax({
+				url: "/my/delete/" + profileNo,
+				type: "POST",
+				data: formdata,
+				processData: false,
+				contentType: false
+			}).done(function(){
+				console.log("삭제완료");
+				location.reload();
+			}).fail(function(){
+				console.log("삭제실패");
+			})
+		}
+	}else{
+		console.log("취소")
+	}
+})
+
+$save.on("click", function() {
+	console.log("click");
+	$partyProfileChange.submit();
 })
