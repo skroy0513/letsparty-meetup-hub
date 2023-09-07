@@ -5,31 +5,41 @@
 	<insert id="insertEvent" parameterType="com.letsparty.vo.Event" useGeneratedKeys="true" keyProperty="no">
 		
 		insert into event
-			(event_title, event_description, is_all_day, event_start_date, 
-			 event_start_time, event_end_date, event_end_time, event_status, user_id,
+			(event_title, event_description, is_all_day, event_start, 
+			 event_end, event_status, user_id,
 			 place_no, post_id, party_no)
 		values
 			(#{title}, #{description}, #{allDay}, 
-			#{startDate}, #{startTime}, #{endDate}, #{endTime},
+			#{start}, #{end},
 			#{status}, #{user.id}, null, null, 1)
 	</insert>
 	
-	<select id="getAllEvents" resultType="com.letsparty.vo.Event">
+	<update id="updateEvent" parameterType="com.letsparty.vo.Event">
+		update events
+		set 
+			event_title = #{title},
+			event_description = #{description},
+			event_start = #{start},
+			event_end = #{end},
+			is_all_day = #{allDay}
+		where 
+			event_no = #{no}
+	</update>
+	
+	<select id="getEvents" parameterType="map" resultType="com.letsparty.vo.Event">
 		select
 			event_no 			as no,
 			event_title			as title,
 			event_description 	as description,
 			is_all_day			as allDay,
-			event_start_date	as startDate,
-			event_start_tiem	as startTime,
-			event_end_date		as endDate,
-			event_end_time		as endTime,
+			event_start			as start,
+			event_end			as end,
 			event_status		as status
 		from 
 			event
-		order by 
-			event_no asc
-	
+		where
+			event_end >= #{startDate} or
+			event_start &lt; #{endDate}
 	</select>
 	
 	<select id="getEventByNo" parameterType="int" resultType="com.letsparty.vo.Event">
@@ -38,10 +48,8 @@
 			event_title			as title,
 			event_description 	as description,
 			is_all_day			as allDay,
-			event_start_date	as startDate,
-			event_start_tiem	as startTime,
-			event_end_date		as endDate,
-			event_end_time		as endTime,
+			event_start			as start,
+			event_end			as end,
 			event_status		as status
 		from 
 			event
