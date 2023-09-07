@@ -57,6 +57,24 @@
 			event_no = #{value}
 	</select>
 	
+	<select id="getEventsByPartyNo" parameterType="int" resultType="com.letsparty.vo.Event">
+		SELECT
+			event_no 			as no,
+			event_title			as title,
+			event_description 	as description,
+			is_all_day			as allDay,
+			event_start			as start,
+			event_end			as end,
+			event_status		as status
+		FROM event
+		WHERE
+			party_no = #{value} AND 
+			event_start > CURDATE() AND
+			event_start &lt;= DATE_ADD(CURDATE(), INTERVAL 15 DAY)
+		ORDER BY event_start
+		LIMIT 5;
+	</select>
+	
 	<delete id="deleteEvent" parameterType="int">
 		delete from
 			event

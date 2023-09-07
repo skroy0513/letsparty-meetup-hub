@@ -27,7 +27,9 @@ public interface EventMapper {
 	
 	// 등록한 일정 삭제하기
 	void deleteEvent(int eventNo);
-
+	
 	void updateEvent(Event existingEvent);
 	
+	// 파티번호로 5개 일정 가져오기
+	List<Event> getEventsByPartyNo(int partyNo);
 }
