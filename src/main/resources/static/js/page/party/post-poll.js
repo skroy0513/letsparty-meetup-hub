@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var addItemButton = document.querySelector(".add-item");
     var itemCounter = 3; // 초기 항목 개수
 
+    
 	var pollAnonymusCheckbox = document.getElementById("anonymous-option");
     var pollDuplicableCheckbox = document.getElementById("duplicable-option");
     
@@ -81,9 +82,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     var pollAnonymousInput = document.getElementById("poll-is-anonymous");
     var pollDuplicateInput = document.getElementById("poll-is-duplicable");
-
+	var pollTitlein = document.getElementById("poll-title");
     var pollItemsHTML = pollItemContents.map(item => `
-        <input type="hidden" value="${item.number}번 : ${item.content}" name="poll_item">
+        <input type="hidden" name="pollOptionForm.items" value="${item.number}:${item.content}" >
     `).join("");
 
     newPoll.innerHTML = `
@@ -106,7 +107,9 @@ document.addEventListener("DOMContentLoaded", function() {
                         <i class="fa-regular fa-circle-xmark fa-xl"></i>
                     </button>
                </div>
-                ${pollItemsHTML} <!-- 항목들을 삽입 -->
+               <div class="poll-option-input-div"> 
+                	${pollItemsHTML} <!-- 항목들을 삽입 -->
+               </div>
             </div>
         </div>
     `;
@@ -116,11 +119,15 @@ document.addEventListener("DOMContentLoaded", function() {
         pollStatusDiv.appendChild(newPoll);
     }
     if (pollAnonymousInput) {
-        pollAnonymousInput.value = pollAnonymusValue ? "true" : "false";
+        pollAnonymousInput.value = pollAnonymusValue ? 1 : 0;
     }
     if (pollDuplicateInput) {
-        pollDuplicateInput.value = pollDuplicableValue ? "true" : "false";
+        pollDuplicateInput.value = pollDuplicableValue ? 1 : 0;
     }
+    if (pollTitlein) {
+		pollTitlein.value = pollTitle;
+	}
+   
 
     var modal = bootstrap.Modal.getInstance(pollModal);
     modal.hide();
