@@ -1,5 +1,12 @@
 let postNo = $("#postNo").val();
 
+// 게시물 삭제할 것인지 확인
+$("#delete-btn").on("click", function(e) {
+    if (!confirm('게시물을 삭제하시겠습니까?')) {
+        e.preventDefault();
+    }
+});
+
 // 최초 상세화면 이동시 댓글 2개 불러옴
 $(function() {
 	fetchAndRenderLatestTwoComments();
