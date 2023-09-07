@@ -11,7 +11,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-
 public class LetsPartyPostForm {
 	
 	@NotBlank(message = "게시글의 제목은 필수 입력 값입니다.")

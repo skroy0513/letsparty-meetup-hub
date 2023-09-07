@@ -17,11 +17,12 @@ public interface ChatRoomMapper {
 	List<ChatRoom> findAllByPartyNoAndCreatorNoAndIsPublicAndChattersCnt(@Param("partyNo") int partyNo, @Param("creatorNo") int creatorNo, @Param("isPublic") boolean isPublic, @Param("chattersCnt") int chattersCnt);
 	String findOneToOneRoomIdByPartyNo(@Param("partyNo") int partyNo, @Param("userNo1") int userNo1, @Param("userNo2") int userNo2);
 	List<ChatRoom> findAllByPartyNoAndUserNo(@Param("partyNo") int partyNo, @Param("userNo") int userNo);
+	List<ChatRoom> getAccessibleRoomsByPartyNoAndUserNo(@Param("partyNo") int partyNo, @Param("userNo") int userNo);
 	
 	void updateChatRoom(ChatRoom chatRoom);
-	void increaseChattersCntById(String id);
-	void decreaseChattersCntById(ChatRoom chatRoom);
+	void increaseChattersCntByNo(long no);
+	void decreaseChattersCntByNo(long no);
 	
-	void deleteChatRoomByNo(int no);
+	void deleteChatRoomByNo(long no);
 	void deleteChatRoomById(String id);
 }

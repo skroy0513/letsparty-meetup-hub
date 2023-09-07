@@ -52,6 +52,7 @@ public class PartyController {
 	@Value("${s3.path.profiles}")
 	private String profilesPath;
 	
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/{partyNo}/join")
 	public String joinParty(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, Model model) {
 		List<UserProfile> userProfiles = userProfileService.getAllProfileByUserId(loginUser.getId());
@@ -63,6 +64,7 @@ public class PartyController {
 		return "/page/party/join-party";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/{partyNo}/join")
 	public String joinParty(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, @RequestParam("profileNo") int profileNo) {
 		// 파티 가입 조건과 일치하면 가입을 승인한다.
@@ -141,6 +143,7 @@ public class PartyController {
 	}
 	
 	// 파티 정보 수정
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/{partyNo}/setting/modify") 
 	public String modify(@PathVariable int partyNo, @Valid PartyForm partyForm, BindingResult error, Model model) {
 		// 최소나이(birthStart)와 최대나이(birthEnd) 검증
@@ -177,12 +180,14 @@ public class PartyController {
 		return "redirect:/party/{partyNo}/setting" ;
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/{partyNo}/post")
 	public String addPost(@PathVariable int partyNo) {
 		return "/page/party/post";
 	}
 	
 	// 게시물 제출
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/{partyNo}/post")
 	public String addPost(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, PostForm postForm) {
 		Post post = new Post();
@@ -204,35 +209,44 @@ public class PartyController {
 		return "page/party/home";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/{partyNo}/setting")
-	public String setting() {
+	public String setting(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, Model model) {
+		UserPartyApplication upa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, loginUser.getId());
+		System.out.println(upa.getUserProfile().getFilename());
+		model.addAttribute("upa", upa);
 		return "page/party/setting";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/{partyNo}/attachment")
 	public String attachment(@PathVariable int partyNo){
 		// partyNo를 사용해서 파티첨부파일을 조회하고 작업을 수행합니다.
 		return"page/party/attachment";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/{partyNo}/album")
 	public String album(@PathVariable int partyNo){
 		// partyNo를 사용해서 파티첨부파일을 조회하고 작업을 수행합니다.
 		return"page/party/album";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/{partyNo}/file")
 	public String file(@PathVariable int partyNo){
 		// partyNo를 사용해서 파티첨부파일을 조회하고 작업을 수행합니다.
 		return"page/party/file";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/{partyNo}/poll")
 	public String poll(@PathVariable int partyNo){
 		// partyNo를 사용해서 파티첨부파일을 조회하고 작업을 수행합니다.
 		return"page/party/poll";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/{partyNo}/event")
 	public String event(@PathVariable int partyNo) {
 		// partyNo를 사용하여 파티 정보를 조회하고 작업을 수행합니다.

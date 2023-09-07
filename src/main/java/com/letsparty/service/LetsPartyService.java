@@ -4,8 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-
+import com.letsparty.dto.LetsPartyPostDto;
 import com.letsparty.exception.PostNotFoundException;
 import com.letsparty.info.Pagination;
 import com.letsparty.mapper.LetsPartyMapper;
@@ -14,6 +15,7 @@ import com.letsparty.vo.LetsPartyPost;
 import com.letsparty.vo.Party;
 import com.letsparty.vo.User;
 import com.letsparty.web.form.LetsPartyPostForm;
+import com.letsparty.web.form.LetsPartyPostModifyForm;
 import com.letsparty.web.model.LetsPartyPostList;
 
 import lombok.RequiredArgsConstructor;
@@ -68,20 +70,32 @@ public class LetsPartyService {
 	}
 
 	// 렛츠파티 게시물 상세 가져오기
-	public LetsPartyPost getPostDetail(long postNo) {
-	    Optional<LetsPartyPost> savedPartyPostOpt = Optional.ofNullable(letsPartyMapper.getPostDetailByNo(postNo));
+	public LetsPartyPostDto getPostDetail(long postNo) {
+	    Optional<LetsPartyPostDto> savedPartyPostOpt = Optional.ofNullable(letsPartyMapper.getPostDetailByNo(postNo));
 	    return savedPartyPostOpt.orElseThrow(() -> new PostNotFoundException("해당 게시물이 존재하지 않습니다."));
 	}
 
 	// 렛츠파티 게시물 조회수 올리기
 	public void increaseReadCount(long postNo) {
-		LetsPartyPost savedPartyPost = getPostDetail(postNo);
+		LetsPartyPostDto savedPartyPost = getPostDetail(postNo);
 	    savedPartyPost.setReadCnt(savedPartyPost.getReadCnt() + 1);
 	    letsPartyMapper.updatePost(savedPartyPost);
 	}
-
+	
+	// 렛츠파티 게시물 업데이트
+	public void updatePost(LetsPartyPostModifyForm letsPartyPostModifyForm) {
+		LetsPartyPostDto letsPartyPost = new LetsPartyPostDto();
+		BeanUtils.copyProperties(letsPartyPostModifyForm, letsPartyPost);
+		letsPartyMapper.updatePost(letsPartyPost);
+	}
+	
+	// 렛츠파티 게시물 삭제
+	public void deletePost(LetsPartyPostDto savedLetsPartyPost) {
+		savedLetsPartyPost.setDeleted(true);
+		letsPartyMapper.updatePost(savedLetsPartyPost);
+	}
+	
 	public List<LetsPartyPost> getPostsLimit5() {
 		return letsPartyMapper.getPostsLimit5();
 	}
-	
 }

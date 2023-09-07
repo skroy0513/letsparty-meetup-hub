@@ -106,7 +106,7 @@
 	</select>
 	
 	<select id="findAllByPartyNoAndUserNo" resultType="ChatRoom">
-		SELECT 
+		SELECT
 			cr.room_no as no,
 			cr.room_id as id,
 			cr.chatters_cnt,
@@ -125,6 +125,26 @@
 		 	cr.room_no DESC;
 	</select>
 	
+	<select id="getAccessibleRoomsByPartyNoAndUserNo" resultType="ChatRoom">
+		SELECT DISTINCT
+			cr.room_no as no,
+			cr.room_id as id,
+			cr.chatters_cnt,
+			cr.party_no as "party.no",
+			cr.creator_no,
+			cr.is_public,
+			cr.is_essential,
+			cr.room_title as title,
+			cr.room_description as description
+		FROM chat_room cr
+		LEFT JOIN chat_user cu ON cr.room_id = cu.room_id AND cu.user_no = #{userNo}
+		WHERE cr.party_no = #{partyNo}
+		AND (cr.is_public = true OR cu.user_no IS NOT NULL)
+		ORDER BY
+			CASE WHEN cr.is_essential = 1 THEN 0 ELSE 1 END,
+		 	cr.room_no DESC;
+	</select>
+	
 	<update id="updateChatRoom" parameterType="ChatRoom">
 		UPDATE chat_room
 		SET
@@ -134,28 +154,23 @@
 			room_id = #{id}
 	</update>
 	
-	<update id="increaseChattersCntById" parameterType="string">
+	<update id="increaseChattersCntByNo" parameterType="long">
 		UPDATE chat_room
 		SET
 			chatters_cnt = chatters_cnt + 1
 		WHERE
-			room_id = #{value}
+			room_no = #{value}
 	</update>
 	
-	<update id="decreaseChattersCntById" parameterType="ChatRoom">
+	<update id="decreaseChattersCntByNo" parameterType="long">
 		UPDATE chat_room
 		SET
 			chatters_cnt = chatters_cnt - 1
 		WHERE
-			room_id = #{roomId}
-		<selectKey>
-			SELECT room_no as no, chatters_cnt, is_essential
-			FROM chat_room
-			WHERE room_id = #{roomId}
-		</selectKey>
+			room_no = #{value}
 	</update>
 	
-	<delete id="deleteChatRoomByNo" parameterType="int">
+	<delete id="deleteChatRoomByNo" parameterType="long">
 		DELETE FROM chat_room
 		WHERE
 			room_no = #{value}
