@@ -89,8 +89,13 @@ public class LetsPartyService {
 		letsPartyMapper.updatePost(letsPartyPost);
 	}
 	
+	// 렛츠파티 게시물 삭제
+	public void deletePost(LetsPartyPostDto savedLetsPartyPost) {
+		savedLetsPartyPost.setDeleted(true);
+		letsPartyMapper.updatePost(savedLetsPartyPost);
+	}
+	
 	public List<LetsPartyPost> getPostsLimit5() {
 		return letsPartyMapper.getPostsLimit5();
 	}
-	
 }

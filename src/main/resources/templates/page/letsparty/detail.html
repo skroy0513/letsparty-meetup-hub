@@ -49,8 +49,8 @@
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                  <li th:if="${#authentication.name == post.user.id}">
-						            <a class="dropdown-item" th:href="@{/letsparty/post/{partyNo}/modify(partyNo=${post.no})}">글 수정</a>
-						            <a class="dropdown-item" href="">삭제</a>
+						            <a class="dropdown-item" th:href="@{/letsparty/post/{postNo}/modify(postNo=${post.no})}">글 수정</a>
+						            <a class="dropdown-item" th:href="@{/letsparty/post/{postNo}/delete(postNo=${post.no})}">삭제</a>
 						     	 </li>
                                  <li sec:authorize="isAuthenticated()" th:if="${#authentication.name != post.user.id}">
                                      <a class="dropdown-item" href="">채팅하기</a>

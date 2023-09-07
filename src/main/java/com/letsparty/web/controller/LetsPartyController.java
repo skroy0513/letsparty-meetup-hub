@@ -126,6 +126,18 @@ public class LetsPartyController {
 		return "redirect:/letsparty/post/{postNo}";
 	}
 	
+	// 게시물 삭제
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/post/{postNo}/delete")
+	public String delete(@PathVariable long postNo, @AuthenticationPrincipal LoginUser loginUser) {
+		LetsPartyPostDto savedLetsPartyPost = letsPartyService.getPostDetail(postNo);
+		if (!savedLetsPartyPost.getUser().getId().equals(loginUser.getId())) {
+			return "redirect:/letsparty";
+		}
+		letsPartyService.deletePost(savedLetsPartyPost);
+		return "redirect:/letsparty";
+	}
+	
 	// 렛츠파티 리스트 표시
 	@GetMapping("/search")
 	public String search(@RequestParam(name = "categoryNo", required = false, defaultValue = "0") Integer categoryNo,
