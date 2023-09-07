@@ -19,5 +19,4 @@
 			category_name		as name
 		from party_category
 	</select>
-	
 </mapper>

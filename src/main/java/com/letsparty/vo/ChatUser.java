@@ -10,15 +10,12 @@ public class ChatUser {
 
 	private String roomId;
 	private int userNo;
-	private long joinMessageNo;
 	private long lastReadMessageNo;
 	
 	@Builder
-	public ChatUser(String roomId, int userNo, long joinMessageNo, long lastReadMessageNo) {
+	public ChatUser(String roomId, int userNo) {
 		super();
 		this.roomId = roomId;
 		this.userNo = userNo;
-		this.joinMessageNo = joinMessageNo;
-		this.lastReadMessageNo = lastReadMessageNo;
 	}
 }
