@@ -120,6 +120,7 @@
 	        post_content = #{content},
 	        post_read_cnt = #{readCnt},
 	        post_comment_cnt = #{commentCnt},
+	        is_deleted = #{deleted},
 	        updated_at = now()
 	    where 
 	        post_no = #{no}
