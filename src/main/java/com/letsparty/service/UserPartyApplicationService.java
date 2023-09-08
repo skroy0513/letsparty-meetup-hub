@@ -76,7 +76,7 @@ public class UserPartyApplicationService {
 	
 	public UserPartyApplication findByPartyNoAndUserId(int partyNo, String userId) {
 		UserPartyApplication upa = userPartyApplicationMapper.findByPartyNoAndUserId(partyNo, userId);
-		if (!upa.getUserProfile().getIsUrl()) {
+		if (upa != null && !upa.getUserProfile().getIsUrl()) {
 			upa.getUserProfile().setFilename(profilePath + upa.getUserProfile().getFilename());
 		}
 		return upa;
@@ -95,7 +95,7 @@ public class UserPartyApplicationService {
 	}
 	
 	public boolean isLeader(LoginUser loginUser) {
-		if (loginUser != null && !userPartyApplicationMapper.findAllThatNotMemberByUserId(loginUser.getId()).isEmpty()) {
+		if (loginUser != null && !userPartyApplicationMapper.findAllThatExceptMemberByUserId(loginUser.getId()).isEmpty()) {
 			return true;
 		}
 		return false;
@@ -109,5 +109,9 @@ public class UserPartyApplicationService {
 				userPartyApplicationMapper.update(savedUpa);
 			}
 		}
+	}
+
+	public void withdraw(int upaNo) {
+		userPartyApplicationMapper.withdraw(upaNo);
 	}
 }

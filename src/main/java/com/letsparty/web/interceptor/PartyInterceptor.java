@@ -1,5 +1,6 @@
 package com.letsparty.web.interceptor;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -52,7 +53,6 @@ public class PartyInterceptor implements HandlerInterceptor {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-
 		
 		String uri = request.getRequestURI();
 		int partyNo = Integer.parseInt(uri.split("/")[2]);
@@ -63,7 +63,6 @@ public class PartyInterceptor implements HandlerInterceptor {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
 			LoginUser user = (LoginUser) authentication.getPrincipal();
-			
 			
 			UserPartyApplication upa =  userPartyApplicationService.findByPartyNoAndUserId(partyNo, user.getId());
 			if (upa != null && upa.getStatus().equals("승인")) {
@@ -88,15 +87,14 @@ public class PartyInterceptor implements HandlerInterceptor {
 				List<Event> getEvents = eventService.getEventsByPartyNo(partyNo);
 				List<EventDto> events = new ArrayList<>();
 				
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("a h:mm");
 				for(Event event : getEvents) {
 					EventDto dto = new EventDto();
 					dto.setDescription(event.getDescription());
 					dto.setTitle(event.getTitle());
-					String day = event.getStartDate().split("-")[2];
-					String month = event.getStartDate().split("-")[1];
-					dto.setStartDay(day);
-					dto.setStartMonth(month);
-					dto.setStartTime(TimeConverter.convertToAmPm(event.getStartTime()));
+					dto.setStartMonth(event.getStart().getMonthValue());
+					dto.setStartDay(event.getStart().getDayOfMonth());
+					dto.setStartTime(event.getStart().format(formatter));
 					events.add(dto);
 				}
 				modelAndView.addObject("events", events);
@@ -105,10 +103,10 @@ public class PartyInterceptor implements HandlerInterceptor {
 			}
 		}
 		
-		UserPartyApplication leadrOfParty = userPartyApplicationService.findByPartyNoAndUserId(partyNo, party.getLeader().getId());
+		UserPartyApplication leaderOfParty = userPartyApplicationService.findByPartyNoAndUserId(partyNo, party.getLeader().getId());
 		
 		modelAndView.addObject("party", party);
-		modelAndView.addObject("leader", leadrOfParty);
+		modelAndView.addObject("leader", leaderOfParty);
 		modelAndView.addObject("partyNo", partyNo);
 	}
 }
