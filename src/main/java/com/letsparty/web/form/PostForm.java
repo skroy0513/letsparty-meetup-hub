@@ -2,12 +2,13 @@ package com.letsparty.web.form;
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
+
 import com.letsparty.vo.Place;
 import com.letsparty.vo.Poll;
 import com.letsparty.vo.PollAnswer;
 import com.letsparty.vo.PollOption;
 import com.letsparty.vo.PollOptionForm;
-import com.letsparty.vo.Post;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,8 +18,12 @@ import lombok.ToString;
 @Setter
 @ToString
 public class PostForm {
-	
-	private Post post;
+
+	@NotBlank(message = "제목은 필수 입력 값입니다.")
+    private String title;
+	@NotBlank(message = "내용은 필수 입력 값입니다.")
+    private String content;
+    private boolean isNotification;
 	private List<String> imageName;
 	private List<String> videoName;
 	
@@ -27,7 +32,5 @@ public class PostForm {
 
 //  투표/투표항목 vo
 	private Poll poll;
-	private PollOption pollOption;
-	private PollAnswer pollAnswer;
 	private PollOptionForm pollOptionForm;
 }

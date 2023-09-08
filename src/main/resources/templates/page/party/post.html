@@ -14,22 +14,24 @@
 				<div class="card-header card-header-text" style="background-color: rgb(237, 246, 255);">
 					<h5 class="pt-1 post-header-text">파티에 게시물을 작성해보세요!</h5>
 				</div>
-				<form method="post" th:action="@{/party/{partyNo}/post(partyNo=${partyNo})}" id="party-post-form">
+				<form method="post" th:action="@{/party/{partyNo}/post(partyNo=${partyNo})}" th:object="${postForm}" id="party-post-form">
 					<div class="card-body">
 						<div class="form-group mb-3 col-12">
 							<label class="form-label">게시글 제목</label>
-							<input class="form-control form-control-lg" type="text" name="post.title" placeholder="게시글 제목을 입력해주세요."> 
+							<input class="form-control form-control-lg" type="text" name="title" placeholder="게시글 제목을 입력해주세요." th:classappend="${#fields.hasErrors('*{title}') ? 'is-invalid' : ''}" > 
+							<div th:errors="*{title}" class="invalid-feedback"></div>
 						</div>
 						<div class="mb-3 col-12">
 							<label class="form-label">게시글 내용</label>
 							<div class="row d-flex justify-content-center" id="text">						
-								<textarea class="form-control" style="width: 97%; border-color: rgb(211, 211, 211);" name="post.content"
-									cols="30" rows="10" placeholder="게시글 내용을 입력해주세요."></textarea>
+								<textarea class="form-control" style="width: 97%; border-color: rgb(211, 211, 211);" name="content"
+									cols="30" rows="10" placeholder="게시글 내용을 입력해주세요." th:classappend="${#fields.hasErrors('*{content}') ? 'is-invalid' : ''}" ></textarea>
+									<div th:errors="*{content}" class="invalid-feedback"></div>
 							</div>
 							<!-- 지도를 첨부했을 때 폼으로 보낼 때 쓰이는 input -->
 							<div>
-								<input id="imageInput" type="file" multiple accept="image/*">
-								<input id="videoInput" type="file" multiple accept="video/*">
+								<input class="sr-only" id="imageInput" type="file" multiple accept="image/*">
+								<input class="sr-only" id="videoInput" type="file" multiple accept="video/*">
 							</div>
 							<div class="media-container">
 								<div class="image-container"></div>
@@ -50,8 +52,8 @@
 									</div>
 									<div class="col-11">
 										<div class="my-1">
-											<h5 id="placeName" class=""><strong>중앙에이치티에이</strong></h5>
-											<h6 id="loadLocation" class="mb-0">서울특별시 종로구 봉익동 율곡로10길 디아망 쥬얼리</h6>
+											<h5 id="placeName" class=""><strong>장소명</strong></h5>
+											<h6 id="loadLocation" class="mb-0">주소</h6>
 											<div id="place-delete-btn" class="d-flex justify-content-end">
 	                                            <button class="btn d-flex pb-3 pe-3">
 	                                                <i class="fa-regular fa-circle-xmark fa-xl"></i>
@@ -62,30 +64,30 @@
 								</div>
 							</div>
 							<div id="poll-input-div">
-										<input type="hidden" id="poll-title" name="poll.title" value="" /> 
-										<input type="hidden" id="poll-is-anonymous" name="poll.anonymous" value="" />
-										<input type="hidden" id="poll-is-duplicable" name="poll.duplicable" value="" />
+								<input type="hidden" id="poll-title" name="poll.title" value="" /> 
+								<input type="hidden" id="poll-is-anonymous" name="poll.anonymous" value="0" />
+								<input type="hidden" id="poll-is-duplicable" name="poll.duplicable" value="0" />
 						  	</div>
 								<div class="my-3" id="poll-short-form">
-									<div class="background-color-gray border-bottom d-flex align-items-center poll-status">
+									<div class="background-color-gray border d-flex align-items-center poll-status">
                  	 				
                  					</div>
 								</div>
 							<div class="background-color-gray my-3" id="event">
-								<div class="border d-flex align-items-center">
-									<div class="col-1 me-1 ms-1 d-flex justify-content-center align-items-center">
-										<div class="">
-											<h1>07</h1>
-											<h6><strong class="post-item-text-color">월요일</strong></h6>
-										</div>
-									</div>
-									<div class="col-11">
-										<div class="">
-											<h5 class=""><strong>강서구 보드게임하러 가실 분?</strong></h5>
-											<p class="mb-0">2023년 8월 7일 오전 11 : 30</p>
-										</div>
-									</div>
-								</div>
+<!-- 								<div class="border d-flex align-items-center"> -->
+<!-- 									<div class="col-1 me-1 ms-1 d-flex justify-content-center align-items-center"> -->
+<!-- 										<div class=""> -->
+<!-- 											<h1>07</h1> -->
+<!-- 											<h6><strong class="post-item-text-color">월요일</strong></h6> -->
+<!-- 										</div> -->
+<!-- 									</div> -->
+<!-- 									<div class="col-11"> -->
+<!-- 										<div class=""> -->
+<!-- 											<h5 class=""><strong>강서구 보드게임하러 가실 분?</strong></h5> -->
+<!-- 											<p class="mb-0">2023년 8월 7일 오전 11 : 30</p> -->
+<!-- 										</div> -->
+<!-- 									</div> -->
+<!-- 								</div> -->
 							</div>
 						</div>
 					</div>
@@ -101,16 +103,16 @@
 									<i class="fa-solid fa-video fa-xl post-item-color"></i>
 								</button>
 							</li>
-							<li class="list-item">
-                              <button class="file" id="openfile" type="button"  data-bs-toggle="modal" data-bs-target="#filemodal">
-                                 <i class="fa-regular fa-file fa-xl post-item-color"></i>
-                              </button>
-                           </li>
-                           <li class="list-item">
-                              <button class="calender" id="opencalender" type="button"  data-bs-toggle="modal" data-bs-target="#calendermodal">
-                                 <i class="fa-regular fa-calendar-days fa-xl post-item-color"></i>
-                              </button>
-                           </li>
+<!-- 							<li class="list-item"> -->
+<!--                               <button class="file" id="openfile" type="button"  data-bs-toggle="modal" data-bs-target="#filemodal"> -->
+<!--                                  <i class="fa-regular fa-file fa-xl post-item-color"></i> -->
+<!--                               </button> -->
+<!--                            </li> -->
+<!--                            <li class="list-item"> -->
+<!--                               <button class="calender" id="opencalender" type="button"  data-bs-toggle="modal" data-bs-target="#calendermodal"> -->
+<!--                                  <i class="fa-regular fa-calendar-days fa-xl post-item-color"></i> -->
+<!--                               </button> -->
+<!--                            </li> -->
                            <li class="list-item">
                               <button class="poll" id="openpoll" type="button"  data-bs-toggle="modal" data-bs-target="#poll-modal">
                                  <i class="fa-solid fa-square-poll-horizontal fa-xl post-item-color"></i>
@@ -124,7 +126,10 @@
 						</ul>
 					</div>
 					<div class="card-footer background-color-gray">
-						<div class="d-flex justify-content-end">
+						<div class="d-flex justify-content-end foot">
+							<div th:if="${upa.roleNo != 8}" class="notification">
+								<label>공지로 등록하기</label><input type="checkbox" name="isNotification">
+							</div>
 							<button id="add-post-btn" class="btn btn-primary" type="submit">게시</button>
 						</div>
 					</div>
@@ -179,15 +184,6 @@
 								</div>
 								<div class="poll-list">
 									<ul class="poll-subject">
-										<li class="poll-item"><span class="item-number"></span> <input
-											type="text" class="inputItem" maxlength="200" value=""
-											name="poll_item" placeholder="항목 입력"></li>
-										<li class="poll-item"><span class="item-number"></span> <input
-											type="text" class="inputItem" maxlength="200" value=""
-											name="poll_item" placeholder="항목 입력"></li>
-										<li class="poll-item"><span class="item-number"></span> <input
-											type="text" class="inputItem" maxlength="200" value=""
-											name="poll_item" placeholder="항목 입력"></li>
 									</ul>
 								</div>
 								<button class="add-item">

@@ -178,3 +178,11 @@ color: rgb(194, 225, 255);
     display: block;
     padding-top: 100%;
 }
+
+.foot label{
+	margin-right: 10px;
+	padding-top: 9px;
+}
+.foot input {
+	margin-right: 10px;
+}
