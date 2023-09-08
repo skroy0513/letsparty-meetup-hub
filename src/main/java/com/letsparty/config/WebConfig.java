@@ -9,16 +9,18 @@ import com.letsparty.web.interceptor.PartyInterceptor;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-	
+
 	private final PartyInterceptor partyInterceptor;
-	
+
 	@Autowired
 	public WebConfig(PartyInterceptor partyInterceptor) {
 		this.partyInterceptor = partyInterceptor;
 	}
-	
+
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(partyInterceptor).addPathPatterns("/party/{partyNo}/**");
+		registry.addInterceptor(partyInterceptor)
+				.addPathPatterns("/party/{partyNo}/**")
+				.excludePathPatterns("/party/{partyNo}/setting/kick");
 	}
 }

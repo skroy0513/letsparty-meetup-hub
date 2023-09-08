@@ -1,11 +1,16 @@
 package com.letsparty.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 
 import com.letsparty.exception.DuplicateEmailException;
 import com.letsparty.exception.DuplicateUserIdException;
+import com.letsparty.vo.Party;
+import com.letsparty.vo.UserPartyApplication;
 import com.letsparty.web.form.SignupForm;
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 public class ValidationService {
 	
 	private final UserService userService;
+	private final PartyService partyService;
+	private final UserPartyApplicationService userPartyApplicationService;
 
 	public boolean checkstep1(SignupForm signupForm, BindingResult errors) {
 
@@ -85,5 +92,33 @@ public class ValidationService {
 		
 		return checkDuplicate;
 	}
+	
+	// 멤버 탈퇴시키기 검사
+    public Map<String, Object> kickOutUser(int partyNo, String userId, String loginUser) {
+        Map<String, Object> response = new HashMap<>();
+        UserPartyApplication savedUserPartyApplication = userPartyApplicationService.findByPartyNoAndUserId(partyNo, userId);
+        Party savedParty = partyService.getPartyByNo(partyNo);
+
+        if (savedUserPartyApplication == null) {
+            response.put("status", "error");
+            response.put("message", "유저를 찾을 수 없습니다.");
+            return response;
+        }
+        if (!savedParty.getLeader().getId().equals(loginUser)) {
+            response.put("status", "error");
+            response.put("message", "리더만 멤버를 탈퇴 시킬 수 있습니다.");
+            return response;
+        }
+        if (savedParty.getLeader().getId().equals(userId)) {
+            response.put("status", "error");
+            response.put("message", "리더는 자기 자신을 탈퇴 시킬 수 없습니다.");
+            return response;
+        }
+        userPartyApplicationService.update(savedUserPartyApplication);
+        response.put("status", "success");
+        response.put("message", "퇴장 처리가 완료되었습니다.");
+        return response;
+	}
+
 
 }

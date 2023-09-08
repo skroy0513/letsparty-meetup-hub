@@ -1,0 +1,56 @@
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/party-base}"
+>
+  <head>
+    <link rel="stylesheet" th:href="@{/css/page/party/kick-out.css}" />
+  </head>
+  <div layout:fragment="content-top" class="content">
+	  <div th:if="${errorMessage}" class="alert alert-danger">
+		<span th:text="${errorMessage}"></span>
+	</div>
+    <div class="user-box pt-3 pb-5 px-5">
+      <div class="row pb-1 fs-5">
+        <h5>총 멤버 수 : <span th:text="${users.size()}">7</span>명</h5>
+      </div>
+	<input type="hidden" id="partyNo" th:value="${partyNo}" />
+      <div class="bg col">
+        <div th:each="user, iterStat : ${users}" class="user-item">
+          <div class="user-info">
+            <div class="pf-image">
+              <img
+                th:if="${user.userProfile.isUrl}"
+                th:src="${user.userProfile.filename}"
+                src="/images/party/profile-default.png"
+                alt=""
+              />
+              <img
+                th:unless="${user.userProfile.isUrl}"
+                th:src="${#strings.concat(profilesPath, user.userProfile.filename)}"
+                src="/images/party/profile-default.png"
+                alt=""
+              />
+            </div>
+            <div class="name">
+              <span th:text="${user.userProfile.nickname}">홍길동</span>
+            </div>
+            <div class="role" th:if="${user.roleNo == 6}">
+              <span>리더</span>
+            </div>
+            <div class="role" th:if="${user.roleNo == 7}">
+              <span>공동리더</span>
+            </div>
+          </div>
+		  <div id="kick" th:if="${user.roleNo == 7 or user.roleNo ==8}">
+			<form id="kick-form">
+				<input type="hidden" name="userId" th:value="${user.user.id}" />
+				<button class="kick-button" type="submit">퇴장시키기</button>
+			</form>
+		 </div>
+		</div>
+      </div>
+    </div>
+  </div>
+<script layout:fragment="script" th:src="@{/js/page/party/kick-out.js}"></script>
+</html>
