@@ -1,5 +1,6 @@
 package com.letsparty.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -16,8 +17,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.letsparty.dto.BeginEndPostNo;
 import com.letsparty.dto.PartyReqDto;
 import com.letsparty.dto.PostAttachment;
+import com.letsparty.dto.SimplePostDto;
 import com.letsparty.mapper.PartyMapper;
 import com.letsparty.security.user.LoginUser;
 import com.letsparty.service.CategoryService;
@@ -235,16 +238,33 @@ public class PartyController {
 			}
 			model.addAttribute("loginUser", user);
 		}
+		
 		// 해당 게시글 번호로 게시글 정보, 첨부파일 정보들을 불러와 저장한 뒤 화면에 표시한다.
 		Post post = postService.getPostByPostNoAndPartyNo(partyNo, postNo);
 		UserPartyApplication upa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, post.getUser().getId());
 		model.addAttribute("post", post);
 		model.addAttribute("upa", upa);
+		
+		// 게시글의 각종 첨부 파일 내용들(이미지, 동영상, 지도, 투표)
 		PostAttachment pa = mediaService.getMediaByPostId(post.getId());
-		System.out.println(pa.getImgList());
-		System.out.println(pa.getVideoList());
 		model.addAttribute("pa",pa);
-		//TODO 해당 게시글 번호의 앞뒤로 2개씩 게시글의 제목, 닉네임, 본문, 댓글수, 조회수를 가져와 화면에 표시한다.
+		
+		// 해당 게시글 번호의 앞뒤로 2개씩 게시글의 제목, 닉네임, 본문, 댓글수, 조회수를 가져와 화면에 표시한다.
+		List<SimplePostDto> spostDto = postService.getSimplePostLimit5(partyNo, postNo);
+		model.addAttribute("simPosts", spostDto);
+		
+		// 마지막 게시글번호가 포함되면 오른쪽 정렬을 하기 위한 로직
+		List<Integer> sPostNos = new ArrayList<>();
+		for (SimplePostDto sPost : spostDto) {
+			sPostNos.add(sPost.getPostNo());
+		}
+		BeginEndPostNo beginEndNo = postService.getBeginAndEndPostNo(partyNo);
+		model.addAttribute("beginEndNo", beginEndNo);
+		model.addAttribute("sPostNos", sPostNos);
+		
+		// 현재 게시글 번호에서 3번째 이후, 이전 게시글 번호 가져오는 로직
+		BeginEndPostNo thirdBeginEndNo = postService.getThirdBeginAndEndPostNo(partyNo, postNo);
+		model.addAttribute("thirdBeginEndNo", thirdBeginEndNo);
 		return "page/party/post";
 	}
 	

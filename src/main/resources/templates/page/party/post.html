@@ -10,83 +10,34 @@
 </head>
 <div layout:fragment="content-top" class="content">
 	<div class="row mb-3">
-		<div class="col-12 d-flex" style="gap: 10px;">
-			<div class="prev">
-				<i class="fa-solid fa-chevron-left"></i>
+		<div class="col-12 d-flex" th:classappend="${#lists.contains(sPostNos, beginEndNo.beginNo) ? 'justify-content-end' : ''}" style="gap: 10px;">
+			<div th:if="${!#lists.contains(sPostNos, beginEndNo.beginNo)}" class="prev">
+				<a th:href="@{/party/{partyNo}/read/{postNo}(partyNo=${partyNo}, postNo=${thirdBeginEndNo.beginNo})}">
+					<i class="fa-solid fa-chevron-left"></i>
+				</a>
 			</div>
-			<div class="preview-container">
-				<div class="preview-item">
-					<div class="item-title">
-						<span class="title">반갑습니다.</span>
-						<span class="nickname">홍길동</span>
-					</div>
-					<div class="item-content">
-						<span>첫 게시물입니다.</span>
-					</div>
-					<div class="item-info">
-						<div class="comment-cnt">
-							댓글 <span>1</span> &#183 조회수 <span>5</span>
+			<div class="preview-container" th:classappend="${#lists.contains(sPostNos, beginEndNo.beginNo) ? 'justify-content-end' : ''}">
+				<div th:each="simPost : ${simPosts}" class="preview-item" th:classappend="${simPost.postNo == post.no ? 'link' : ''}">
+					<a th:href="@{/party/{partyNo}/read/{postNo}(partyNo=${simPost.partyNo}, postNo=${simPost.postNo})}">
+						<div class="item-title">
+							<span th:text="${simPost.title}" class="title">반갑습니다.</span>
+							<span th:text="${simPost.nickname}" class="nickname">홍길동</span>
 						</div>
-					</div>
-				</div>
-				<div class="preview-item">
-					<div class="item-title">
-						<span class="title">엄청 긴 내용</span>
-						<span class="nickname">홍길동이라 불리운 사나이</span>
-					</div>
-					<div class="item-content">
-						<span class="title">첫 게시물입니다.첫 게시물입니다.첫 게시물입니다.첫 게시물입니다.첫 게시물입니다.첫 게시물입니다.첫 게시물입니다.첫 게시물입니다.첫
-							게시물입니다.첫 게시물입니다.</span>
-					</div>
-					<div class="item-info">
-						<div class="comment-cnt">
-							댓글 <span>1</span> &#183 조회수 <span>5</span>
+						<div class="item-content">
+							<span th:text="${simPost.content}">첫 게시물입니다.</span>
 						</div>
-					</div>
-				</div>
-				<div class="preview-item">
-					<div class="item-title">
-						<span class="title">엄청 긴 제목입니다아아아아아~~~니아ㅓ</span>
-						<span class="nickname">홍길동바보</span>
-					</div>
-					<div class="item-content">
-						<span>첫 게시물입니다.</span>
-					</div>
-					<div class="item-info">
-						<div class="comment-cnt">
-							댓글 <span>1</span> &#183 조회수 <span>5</span>
+						<div class="item-info">
+							<div class="comment-cnt">
+								댓글 <span th:text="${simPost.commentCnt}">1</span> &#183 조회수 <span th:text="${simPost.readCnt}">5</span>
+							</div>
 						</div>
-					</div>
-				</div>
-				<div class="preview-item">
-					<div class="item-title">
-						<span>반갑습니다.</span>
-					</div>
-					<div class="item-content">
-						<span>첫 게시물입니다.</span>
-					</div>
-					<div class="item-info">
-						<div class="comment-cnt">
-							댓글 <span>1</span> &#183 조회수 <span>5</span>
-						</div>
-					</div>
-				</div>
-				<div class="preview-item">
-					<div class="item-title">
-						<span>반갑습니다.</span>
-					</div>
-					<div class="item-content">
-						<span>첫 게시물입니다.</span>
-					</div>
-					<div class="item-info">
-						<div class="comment-cnt">
-							댓글 <span>1</span> &#183 조회수 <span>5</span>
-						</div>
-					</div>
+					</a>
 				</div>
 			</div>
-			<div class="next">
-				<i class="fa-solid fa-chevron-right"></i>
+			<div th:if="${!#lists.contains(sPostNos, beginEndNo.endNo)}" class="next">
+				<a th:href="@{/party/{partyNo}/read/{postNo}(partyNo=${partyNo}, postNo=${thirdBeginEndNo.endNo})}">
+					<i class="fa-solid fa-chevron-right"></i>
+				</a>
 			</div>
 		</div>
 	</div>

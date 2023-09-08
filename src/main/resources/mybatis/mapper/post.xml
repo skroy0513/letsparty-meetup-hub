@@ -39,6 +39,97 @@
 			post_no = #{postNo}
 	</select>
 	
+	<select id="getPostNoWithCurPostNoLimit5" resultType="int">
+		SELECT 
+			post_no 
+		FROM 
+			(
+			SELECT * 
+			FROM 
+				(SELECT * 
+				FROM post 
+				WHERE post_no &lt; #{postNo}
+				AND is_deleted = 0
+				AND party_no = #{partyNo}
+				ORDER BY post_no DESC 
+				LIMIT 2) a
+			UNION
+			SELECT * 
+			FROM post 
+			WHERE post_no = #{postNo}
+			AND party_no = #{partyNo}
+			UNION
+			SELECT * 
+			FROM 
+				(SELECT * 
+				FROM post 
+				WHERE post_no &gt; #{postNo}
+				AND is_deleted = 0
+				AND party_no = #{partyNo}
+				ORDER BY post_no ASC 
+				LIMIT 2 ) b
+			) c
+		WHERE 
+			is_deleted = 0
+		ORDER BY post_no;
+	</select>
+	
+	<select id="getSimplePostByPostNoAndPartyNo" resultType="com.letsparty.dto.SimplePostDto">
+		SELECT 
+			p.party_no as partyNo,
+			p.post_no as postNo,
+			p.post_title as title, 
+			p.post_content as content, 
+			p.post_comment_cnt as commentCnt, 
+			p.post_read_cnt as readCnt, 
+			up.profile_nickname as nickname
+		FROM 
+			post p
+		JOIN user_party_application upa ON p.user_id = upa.user_id
+		JOIN user_profile up ON upa.profile_no = up.profile_no 
+		WHERE 
+			p.post_no = #{postNo}
+		AND 
+			p.party_no = #{partyNo}
+		AND 
+			upa.party_no = #{partyNo};
+	</select>
+	
+	<select id="getBeginAndEndPostNo" parameterType="int" resultType="com.letsparty.dto.BeginEndPostNo">
+		SELECT 
+			MAX(post_no) as endNo,
+			MIN(post_no) as beginNo
+		FROM 
+			post
+		WHERE 
+			party_no = #{value}
+		AND 
+			is_deleted = 0;
+	</select>
+	
+	<select id="getThirdBeginAndEndPostno" resultType="com.letsparty.dto.BeginEndPostNo">
+		SELECT
+		    IFNULL(
+		        (SELECT post_no 
+		        FROM post 
+		        WHERE post_no &lt; #{postNo} 
+		        AND party_no = #{partyNo} 
+		        AND is_deleted = 0 
+		        ORDER BY post_no DESC 
+		        LIMIT 2, 1),
+		        (SELECT MIN(post_no) FROM post WHERE party_no = #{partyNo} AND is_deleted = 0)
+		    ) as beginNo,
+		    IFNULL(
+		        (SELECT post_no 
+		        FROM post 
+		        WHERE post_no &gt; #{postNo}
+		        AND party_no = #{partyNo}
+		        AND is_deleted = 0 
+		        ORDER BY post_no 
+		        LIMIT 2, 1),
+		        (SELECT MAX(post_no) FROM post WHERE party_no = #{partyNo} AND is_deleted = 0)
+		    ) as endNo;
+	</select>
 	
 	<update id="readIncrement" parameterType="Post">
 		UPDATE post

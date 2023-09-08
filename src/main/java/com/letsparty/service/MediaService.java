@@ -50,7 +50,6 @@ public class MediaService {
 		Poll poll = pollMapper.getPollByPostId(postId);
 		if (null != poll) {
 			List<PollOption> pollOptions = pollMapper.getPollOptionsByPollNo(poll.getNo());
-			System.out.println(pollOptions.toString());
 			pa.setPollOptions(pollOptions);
 		}
 		pa.setPlace(place);

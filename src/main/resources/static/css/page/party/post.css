@@ -8,7 +8,7 @@
 
 .preview-container {
 	gap: 2.5%;
-	width: 100%;
+	width: 95%;
 	display: flex;
 }
 
@@ -18,11 +18,15 @@
 	background-color: beige;
 	border: 1px solid black;
 }
+.link {
+    border: 2px solid red;
+}
 .item-title {
 	padding: 7px 10px;
 	border-bottom: 1px solid black;
 	display: flex;
 	justify-content: space-between;
+    font-weight: 600;
 }
 .item-title .title {
 	display: block;
@@ -58,7 +62,7 @@
 }
 .item-info {
 	font-size: 14px;
-	padding: 0 10px;
+	padding: 0px 10px;
 }
 
 .post-item-text-color {
