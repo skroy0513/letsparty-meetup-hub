@@ -1,10 +1,13 @@
 package com.letsparty.web.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -15,18 +18,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.letsparty.dto.PartyReqDto;
-import com.letsparty.mapper.PartyMapper;
 import com.letsparty.security.user.LoginUser;
 import com.letsparty.service.CategoryService;
 import com.letsparty.service.PartyService;
 import com.letsparty.service.UserPartyApplicationService;
 import com.letsparty.service.UserProfileService;
-import com.letsparty.service.UserService;
 import com.letsparty.util.PartyDataUtils;
 import com.letsparty.vo.Party;
-import com.letsparty.vo.PartyReq;
 import com.letsparty.vo.Post;
 import com.letsparty.vo.User;
 import com.letsparty.vo.UserPartyApplication;
@@ -222,6 +223,34 @@ public class PartyController {
 	public String withdraw(@PathVariable("partyNo") int partyNo, @PathVariable("upaNo") int upaNo) {
 		userPartyApplicationService.withdraw(upaNo);
 		return "redirect:/party/{partyNo}";
+	}
+	
+	// 퇴장시키기 화면
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/{partyNo}/setting/member")
+	public String kickOutPage(@PathVariable int partyNo, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+		List<UserPartyApplication> userPartyApplications = partyService.getUserPartyApplications(partyNo, loginUser.getNo());
+		model.addAttribute("users", userPartyApplications);
+		model.addAttribute("partyNo", partyNo);
+		model.addAttribute("profilesPath", profilesPath);
+		return "page/party/kick-out";
+	}
+	
+	// 퇴장시키기
+	@PostMapping("/{partyNo}/setting/kick")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> kickOut(@PathVariable int partyNo, @RequestParam String userId, @AuthenticationPrincipal LoginUser loginUser) {
+		Map<String, Object> response = new HashMap<>();
+	    UserPartyApplication savedUserPartyApplication = userPartyApplicationService.findByPartyNoAndUserId(partyNo, userId);
+	    if(savedUserPartyApplication == null) {
+	        response.put("status", "error");
+	        response.put("message", "유저를 찾을 수 없습니다.");
+	        return ResponseEntity.badRequest().body(response);
+	    }
+	    userPartyApplicationService.update(savedUserPartyApplication);
+	    response.put("status", "success");
+	    response.put("message", "퇴장 처리가 완료되었습니다.");
+	    return ResponseEntity.ok(response);
 	}
 	
 	@PreAuthorize("isAuthenticated()")

@@ -259,7 +259,7 @@ public class LetsPartyController {
 	}
 	
 	private void addUserPartyApplicationsToModel(LoginUser loginUser, Model model) {
-	    List<UserPartyApplication> userPartyApplications = userPartyApplicationService.findAllByUserId(loginUser.getId());
+	    List<UserPartyApplication> userPartyApplications = userPartyApplicationService.findAllThatExceptMemberByUserId(loginUser.getId());
 	    model.addAttribute("userPartyApplications", userPartyApplications);
 	}
 	

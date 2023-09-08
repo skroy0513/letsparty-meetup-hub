@@ -94,6 +94,16 @@ public class UserPartyApplicationService {
 		return upaList;
 	}
 	
+	public List<UserPartyApplication> findAllThatExceptMemberByUserId(String userId) {
+		List<UserPartyApplication> upaList = userPartyApplicationMapper.findAllThatExceptMemberByUserId(userId);
+		return upaList;
+	}
+	
+	public void update(UserPartyApplication savedUserPartyApplication) {
+		savedUserPartyApplication.setStatus("강퇴");
+		userPartyApplicationMapper.update(savedUserPartyApplication);
+	}
+	
 	public boolean isLeader(LoginUser loginUser) {
 		if (loginUser != null && !userPartyApplicationMapper.findAllThatExceptMemberByUserId(loginUser.getId()).isEmpty()) {
 			return true;
