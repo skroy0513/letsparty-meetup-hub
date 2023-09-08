@@ -3,6 +3,10 @@ package com.letsparty.web.form;
 import java.util.List;
 
 import com.letsparty.vo.Place;
+import com.letsparty.vo.Poll;
+import com.letsparty.vo.PollAnswer;
+import com.letsparty.vo.PollOption;
+import com.letsparty.vo.PollOptionForm;
 import com.letsparty.vo.Post;
 
 import lombok.Getter;
@@ -21,4 +25,9 @@ public class PostForm {
 //	지도 vo 
 	private Place place;
 
+//  투표/투표항목 vo
+	private Poll poll;
+	private PollOption pollOption;
+	private PollAnswer pollAnswer;
+	private PollOptionForm pollOptionForm;
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.letsparty.dto.PartyReqDto;
+import com.letsparty.mapper.PartyMapper;
 import com.letsparty.security.user.LoginUser;
 import com.letsparty.service.CategoryService;
 import com.letsparty.service.PartyService;
@@ -191,7 +192,10 @@ public class PartyController {
 	public String addPost(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, PostForm postForm) {
 		Post post = new Post();
 		User user = new User();
+		Party party = partyService.getPartyByNo(partyNo);
+		
 		user.setId(loginUser.getId());
+		post.setParty(party);
 		post.setUser(user);
 		postForm.setPost(post);
 		

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -17,14 +18,18 @@ import com.letsparty.mapper.PartyMapper;
 import com.letsparty.mapper.PartyReqMapper;
 import com.letsparty.mapper.PartyTagMapper;
 import com.letsparty.mapper.PlaceMapper;
+import com.letsparty.mapper.PollMapper;
 import com.letsparty.mapper.UserMapper;
 import com.letsparty.mapper.UserPartyApplicationMapper;
+import com.letsparty.security.user.LoginUser;
 import com.letsparty.vo.Category;
 import com.letsparty.vo.Media;
 import com.letsparty.vo.Party;
 import com.letsparty.vo.PartyReq;
 import com.letsparty.vo.PartyTag;
 import com.letsparty.vo.Place;
+import com.letsparty.vo.Poll;
+import com.letsparty.vo.PollOption;
 import com.letsparty.vo.Post;
 import com.letsparty.vo.User;
 import com.letsparty.vo.UserPartyApplication;
@@ -45,6 +50,7 @@ public class PartyService {
 	private final PartyReqMapper partyReqMapper;
 	private final PartyTagMapper partyTagMapper;
 	private final PlaceMapper placeMapper;
+	private final PollMapper pollMapper;
 	private final MediaMapper mediaMapper;
 	private final UserPartyApplicationMapper userPartyApplicationMapper;
 	@Value("${s3.path.covers}")
@@ -201,6 +207,11 @@ public class PartyService {
 		if (postForm.getImageName() != null || postForm.getVideoName() != null) {
 			insertMedia(postForm.getImageName(), postForm.getVideoName(), post);
 		}
+		if (postForm.getPoll() != null) {
+		// 폼에 투표 정보가 있다면 반환받은 게시물 id와 투표정보 db 저장
+			insertPoll(postForm,1);
+		}
+
 	}
 
 	// 게시물용 지도 정보 추가 메서드
@@ -214,6 +225,36 @@ public class PartyService {
 		place.setPost(post);
 
 		placeMapper.insertPlace(place);
+	}
+
+	// 게시물용 투표 정보 추가 메서드
+	private void insertPoll(PostForm postForm, long postId) {
+		Poll poll = new Poll();
+		Post post = new Post();
+		
+		BeanUtils.copyProperties(postForm.getPost(), post);
+		BeanUtils.copyProperties(postForm.getPoll(), poll);
+		//Poll 객체의 게시물 id 등록
+		post.setId(postId);
+		poll.setPost(post);
+		poll.setUser(post.getUser());
+		poll.setParty(post.getParty());
+		
+		pollMapper.insertPoll(poll);
+		
+	    for (String option : postForm.getPollOptionForm().getItems()) {
+	    	  String[] values = option.split(":");
+		      int no = Integer.parseInt(values[0]);
+		      String optionName = values[1];
+
+		      PollOption item = new PollOption();
+		      item.setOptionNo(no);
+		      item.setOptionName(optionName);
+		      item.setPoll(poll);
+		      item.setNumberOfPoll(0);// 항목이선택된 수 생성될때는 0이 기본값으로 들어간다.
+
+		      pollMapper.insertPollOption(item);
+		   }
 	}
 
 	// Tag를 추가해주는 메서드
