@@ -1,6 +1,7 @@
 package com.letsparty.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.letsparty.vo.Post;
 
@@ -11,7 +12,7 @@ public interface PostMapper {
 
 	int getLastPostNoByPartyNo(int partyNo);
 
-	void readIncrement(int postNo);
+	Post getPostByPostNoAndPartyNo(@Param("partyNo") int partyNo,@Param("postNo") int postNo);
 
-	Post getPostByPostNoAndPartyNo(int partyNo, int postNo);
+	void readIncrement(Post post);
 }

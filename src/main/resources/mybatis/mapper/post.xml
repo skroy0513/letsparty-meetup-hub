@@ -8,25 +8,51 @@
 	</insert>
 	
 	<select id="getLastPostNoByPartyNo" parameterType="int" resultType="int">
-		SELECT post_id
+		SELECT post_no
 		FROM post
 		WHERE party_no = #{value}
 		AND is_deleted = 0
-		ORDER BY post_no DESC;
+		ORDER BY post_no DESC
+		LIMIT 1;
+	</select>
+	
+	<select id="getPostByPostNoAndPartyNo" resultType="Post">
+		SELECT
+			post_id as id,
+			post_no as no,
+			party_no as "party.no",
+			user_id as "user.id",
+			post_title as title,
+			post_content as content,
+			post_read_cnt as readCnt,
+			post_comment_cnt as commentCnt,
+			post_like_cnt as likeCnt,
+			is_deleted as deleted,
+			is_notification as notification,
+			updated_at as updatedAt,
+			created_at as createdAt
+		FROM
+			post
+		WHERE
+			party_no = #{partyNo}
+		AND			
+			post_no = #{postNo}
 	</select>
 	
 	
-	<update id="readIncrement" parameterType="int">
+	<update id="readIncrement" parameterType="Post">
 		UPDATE post
 		SET 
 			post_title = #{title},
 			post_content = #{content},
 			post_read_cnt = #{readCnt},
 			post_comment_cnt = #{commentCnt},
-			is_deleted = #{deleted}
-			post_is_notification = #{notification}
+			is_deleted = #{deleted},
+			is_notification = #{notification}
 		WHERE
-			post_id = #{id}
+			party_no = #{party.no}
+		AND
+			post_no = #{no}
 	</update>
 	
 

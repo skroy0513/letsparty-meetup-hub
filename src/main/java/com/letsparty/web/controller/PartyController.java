@@ -17,15 +17,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.letsparty.dto.PartyReqDto;
+import com.letsparty.dto.PostAttachment;
 import com.letsparty.mapper.PartyMapper;
 import com.letsparty.security.user.LoginUser;
 import com.letsparty.service.CategoryService;
+import com.letsparty.service.MediaService;
 import com.letsparty.service.PartyService;
 import com.letsparty.service.PostService;
 import com.letsparty.service.UserPartyApplicationService;
 import com.letsparty.service.UserProfileService;
 import com.letsparty.service.UserService;
 import com.letsparty.util.PartyDataUtils;
+import com.letsparty.vo.Media;
 import com.letsparty.vo.Party;
 import com.letsparty.vo.PartyReq;
 import com.letsparty.vo.Post;
@@ -46,9 +49,11 @@ public class PartyController {
 	
 	private final PartyService partyService;
 	private final PostService postService;
+	private final MediaService mediaService;
 	private final CategoryService categoryService;
 	private final UserProfileService userProfileService;
 	private final UserPartyApplicationService userPartyApplicationService;
+	private final UserService userService;
 	@Value("${s3.path.covers}")
 	private String coversPath;
 	@Value("${s3.path.profiles}")
@@ -215,15 +220,30 @@ public class PartyController {
 	}
 	
 	@GetMapping("/{partyNo}/read/{postNo}")
-	public String read(@PathVariable int partyNo, @PathVariable int postNo) {
-		//TODO 해당 게시글 번호의 조회수를 1 올린다.
+	public String read(@PathVariable("partyNo") int partyNo, @PathVariable("postNo") int postNo) {
 		postService.readIncrement(partyNo, postNo);
 		return "redirect:/party/{partyNo}/post/{postNo}";
 	}
 	
 	@GetMapping("/{partyNo}/post/{postNo}")
-	public String readPost() {
-		//TODO 해당 게시글 번호로 게시글 정보, 첨부파일 정보들을 불러와 저장한 뒤 화면에 표시한다.
+	public String readPost(@PathVariable("partyNo") int partyNo, @PathVariable("postNo") int postNo, @AuthenticationPrincipal LoginUser loginUser, Model model) {
+		if (null != loginUser) {
+			User user = userService.getUserByName(loginUser.getId());
+			UserPartyApplication loginUpa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, loginUser.getId());
+			if (null != loginUpa) {
+				model.addAttribute("loginUpa", loginUpa);
+			}
+			model.addAttribute("loginUser", user);
+		}
+		// 해당 게시글 번호로 게시글 정보, 첨부파일 정보들을 불러와 저장한 뒤 화면에 표시한다.
+		Post post = postService.getPostByPostNoAndPartyNo(partyNo, postNo);
+		UserPartyApplication upa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, post.getUser().getId());
+		model.addAttribute("post", post);
+		model.addAttribute("upa", upa);
+		PostAttachment pa = mediaService.getMediaByPostId(post.getId());
+		System.out.println(pa.getImgList());
+		System.out.println(pa.getVideoList());
+		model.addAttribute("pa",pa);
 		//TODO 해당 게시글 번호의 앞뒤로 2개씩 게시글의 제목, 닉네임, 본문, 댓글수, 조회수를 가져와 화면에 표시한다.
 		return "page/party/post";
 	}
