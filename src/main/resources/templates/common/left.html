@@ -12,9 +12,16 @@
 			</div>
 		</div>
 		<div class="button">
-			<a th:href="@{/party/{partyNo}/join(partyNo=${partyNo})}">
-				<div th:text="${member != null ? '글쓰기' : '파티 가입하기'}" class="text">글쓰기 / 파티가입하기</div>
-			</a>
+			<th:block th:if="${member != null}">
+				<a th:href="@{/party/{partyNo}/post(partyNo=${partyNo})}">
+					<div class="text">글쓰기</div>
+				</a>
+			</th:block>
+			<th:block th:if="${member == null}">
+				<a th:href="@{/party/{partyNo}/join(partyNo=${partyNo})}">
+					<div class="text">파티가입하기</div>
+				</a>
+			</th:block>
 		</div>
 		<div th:if="${member}" class="setting">
 			<div class="setting-box">
