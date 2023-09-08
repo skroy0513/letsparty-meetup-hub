@@ -203,7 +203,6 @@ public class PartyService {
 		post.setNotification(postForm.isNotification());
 		post.setParty(party);
 		post.setUser(user);
-		System.out.println(post.toString());
 		postMapper.insertPost(post);
 		
 //		게시물 저장 후 반환된 postId가 등록되어야 함
