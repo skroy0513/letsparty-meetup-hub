@@ -76,10 +76,7 @@ public class UserPartyApplicationService {
 	
 	public UserPartyApplication findByPartyNoAndUserId(int partyNo, String userId) {
 		UserPartyApplication upa = userPartyApplicationMapper.findByPartyNoAndUserId(partyNo, userId);
-		if (upa == null) {
-			return null;
-		}
-		if (!upa.getUserProfile().getIsUrl()) {
+		if (upa != null && !upa.getUserProfile().getIsUrl()) {
 			upa.getUserProfile().setFilename(profilePath + upa.getUserProfile().getFilename());
 		}
 		return upa;
