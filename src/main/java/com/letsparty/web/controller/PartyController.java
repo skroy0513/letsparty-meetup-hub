@@ -244,7 +244,8 @@ public class PartyController {
 	// 퇴장시키기
 	@PostMapping("/{partyNo}/setting/kick")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> kickOut(@PathVariable int partyNo, @RequestParam String userId, @AuthenticationPrincipal LoginUser loginUser) {
+	public ResponseEntity<Map<String, Object>> kickOut(@PathVariable int partyNo,
+			@RequestParam String userId /* @AuthenticationPrincipal LoginUser loginUser */) {
 		Map<String, Object> response = new HashMap<>();
 	    UserPartyApplication savedUserPartyApplication = userPartyApplicationService.findByPartyNoAndUserId(partyNo, userId);
 	    if(savedUserPartyApplication == null) {
@@ -252,6 +253,8 @@ public class PartyController {
 	        response.put("message", "유저를 찾을 수 없습니다.");
 	        return ResponseEntity.badRequest().body(response);
 	    }
+	    //TODO 멤버 강퇴를 시도하는 유저가 리더인지, 자기 자신을 탈퇴하려고 시도하지 않는지 loginUser인자를 사용하여 추가로 검사할 수 있음
+	    
 	    userPartyApplicationService.update(savedUserPartyApplication);
 	    response.put("status", "success");
 	    response.put("message", "퇴장 처리가 완료되었습니다.");
