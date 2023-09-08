@@ -230,6 +230,11 @@ public class PartyController {
 	@GetMapping("/{partyNo}/setting/member")
 	public String kickOutPage(@PathVariable int partyNo, Model model, @AuthenticationPrincipal LoginUser loginUser) {
 		List<UserPartyApplication> userPartyApplications = partyService.getUserPartyApplications(partyNo, loginUser.getNo());
+		Party savedParty = partyService.getPartyByNo(partyNo);
+		// 자신이 해당 파티의 리더가 아니라면 리다이렉트
+		if(!savedParty.getLeader().getId().equals(loginUser.getId())) {
+			return "redirect:/party/{partyNo}";
+		}
 		model.addAttribute("users", userPartyApplications);
 		model.addAttribute("partyNo", partyNo);
 		model.addAttribute("profilesPath", profilesPath);
