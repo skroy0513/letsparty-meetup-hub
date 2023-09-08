@@ -32,7 +32,5 @@ public class PostForm {
 
 //  투표/투표항목 vo
 	private Poll poll;
-	private PollOption pollOption;
-	private PollAnswer pollAnswer;
 	private PollOptionForm pollOptionForm;
 }
