@@ -70,6 +70,7 @@ public class UserPartyApplicationService {
 		}
 		
 		addUserPartyApplicationWithApproved(partyNo, userId, 8, userProfile);
+		//TODO 파티 가입후 해당 파티의 인원 증가 메소드 필요...
 		
 		return true;
 	}
