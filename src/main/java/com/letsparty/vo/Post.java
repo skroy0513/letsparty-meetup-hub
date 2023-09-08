@@ -15,8 +15,8 @@ public class Post {
     private int no;
     private Party party; 
     private User user;
-    private String title; 
-    private String content; 
+    private String title;
+    private String content;
     private int readCnt; 
     private int commentCnt;
     private int likeCnt;

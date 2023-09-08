@@ -19,6 +19,7 @@ import com.letsparty.mapper.PartyReqMapper;
 import com.letsparty.mapper.PartyTagMapper;
 import com.letsparty.mapper.PlaceMapper;
 import com.letsparty.mapper.PollMapper;
+import com.letsparty.mapper.PostMapper;
 import com.letsparty.mapper.UserMapper;
 import com.letsparty.mapper.UserPartyApplicationMapper;
 import com.letsparty.security.user.LoginUser;
@@ -53,6 +54,7 @@ public class PartyService {
 	private final PollMapper pollMapper;
 	private final MediaMapper mediaMapper;
 	private final UserPartyApplicationMapper userPartyApplicationMapper;
+	private final PostMapper postMapper;
 	@Value("${s3.path.covers}")
 	private String coversPath;
 
@@ -191,27 +193,35 @@ public class PartyService {
 	}
 
 	// 게시물 추가
-	public void insertPost(PostForm postForm) {
+	public void insertPost(PostForm postForm, int partyNo, String id) {
 		Post post = new Post();
-		BeanUtils.copyProperties(postForm.getPost(), post);
-//		게시물 저장 후 반환된 postId가 등록되어야 함
-//		long postId = post.getId();
 
-		post.setId(1); // 삭제 필요
+		Party party = partyMapper.getPartyByNo(partyNo);
+		User user = userMapper.getUserById(id);
+		post.setTitle(postForm.getTitle());
+		post.setContent(postForm.getContent());
+		post.setNotification(postForm.isNotification());
+		post.setParty(party);
+		post.setUser(user);
+		System.out.println(post.toString());
+		postMapper.insertPost(post);
+		
+//		게시물 저장 후 반환된 postId가 등록되어야 함
+		long postId = post.getId();
+		System.out.println(postId);
 
 		// 폼에 지도 정보가 있다면 반환받은 게시물 id와 지도 정보 db 저장
 		if (postForm.getPlace().getId() != null && !postForm.getPlace().getId().isBlank()) {
-			insertPlace(postForm, 1); // 실제 코드 insertPlace(postForm, postId);
+			insertPlace(postForm, postId); // 실제 코드 insertPlace(postForm, postId);
 		}
 		// 폼에 사진 및 동영상이 있다면 반환받은 게시물 id와 미디어 정보 db 저장
 		if (postForm.getImageName() != null || postForm.getVideoName() != null) {
 			insertMedia(postForm.getImageName(), postForm.getVideoName(), post);
 		}
-		if (postForm.getPoll() != null) {
+		if (!postForm.getPoll().getTitle().isBlank()) {
 		// 폼에 투표 정보가 있다면 반환받은 게시물 id와 투표정보 db 저장
-			insertPoll(postForm,1);
+			insertPoll(postForm, post);
 		}
-
 	}
 
 	// 게시물용 지도 정보 추가 메서드
@@ -228,14 +238,11 @@ public class PartyService {
 	}
 
 	// 게시물용 투표 정보 추가 메서드
-	private void insertPoll(PostForm postForm, long postId) {
+	private void insertPoll(PostForm postForm, Post post) {
 		Poll poll = new Poll();
-		Post post = new Post();
 		
-		BeanUtils.copyProperties(postForm.getPost(), post);
 		BeanUtils.copyProperties(postForm.getPoll(), poll);
 		//Poll 객체의 게시물 id 등록
-		post.setId(postId);
 		poll.setPost(post);
 		poll.setUser(post.getUser());
 		poll.setParty(post.getParty());
@@ -285,28 +292,32 @@ public class PartyService {
 		System.out.println(post.getId());
 		List<Media> images = new ArrayList<>();
 		List<Media> videos = new ArrayList<>();
-		for (String imageName : imageList) {
-			Media media = new Media();
-			media.setContentType("image");
-			media.setName(imageName);
-			media.setPostId(post.getId());
-			media.setPartyNo(1);
-			;
-			media.setUser(post.getUser());
-			images.add(media);
+		if (null != imageList) {
+			for (String imageName : imageList) {
+				Media media = new Media();
+				media.setContentType("image");
+				media.setName(imageName);
+				media.setPostId(post.getId());
+				media.setPartyNo(1);
+				;
+				media.setUser(post.getUser());
+				images.add(media);
+			}
+			mediaMapper.insertMedia(images);
 		}
-		mediaMapper.insertMedia(images);
-
-		for (String videoName : videoList) {
-			Media media = new Media();
-			media.setContentType("video");
-			media.setName(videoName);
-			media.setPostId(post.getId());
-			media.setPartyNo(1);
-			media.setUser(post.getUser());
-			videos.add(media);
+		
+		if (null != videoList) {
+			for (String videoName : videoList) {
+				Media media = new Media();
+				media.setContentType("video");
+				media.setName(videoName);
+				media.setPostId(post.getId());
+				media.setPartyNo(1);
+				media.setUser(post.getUser());
+				videos.add(media);
+			}
+			mediaMapper.insertMedia(videos);
 		}
-		mediaMapper.insertMedia(videos);
 	}
 
 	public List<UserPartyApplication> getUserPartyApplications(int partyNo, int myNo) {

@@ -182,24 +182,26 @@ public class PartyController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/{partyNo}/post")
-	public String addPost(@PathVariable int partyNo) {
+	public String addPost(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, Model model) {
+		UserPartyApplication upa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, loginUser.getId());
+		model.addAttribute("upa", upa);
+		PostForm postForm = new PostForm();
+		model.addAttribute("postForm", postForm);
 		return "/page/party/post";
 	}
 	
 	// 게시물 제출
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/{partyNo}/post")
-	public String addPost(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, PostForm postForm) {
-		Post post = new Post();
-		User user = new User();
-		Party party = partyService.getPartyByNo(partyNo);
-		
-		user.setId(loginUser.getId());
-		post.setParty(party);
-		post.setUser(user);
-		postForm.setPost(post);
-		
-		partyService.insertPost(postForm);
+	public String addPost(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, @Valid PostForm postForm,
+			BindingResult error, Model model) {
+		UserPartyApplication upa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, loginUser.getId());
+		model.addAttribute("upa", upa);
+		// TODO 제목, 본문 글자 수 제한하는 유효성 구현하기
+		if (error.hasErrors()) {
+			return "page/party/post";
+		}
+		partyService.insertPost(postForm, partyNo, loginUser.getId());
 		return "redirect:/party/{partyNo}";
 	}
 	
@@ -213,7 +215,6 @@ public class PartyController {
 	@GetMapping("/{partyNo}/setting")
 	public String setting(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, Model model) {
 		UserPartyApplication upa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, loginUser.getId());
-		System.out.println(upa.getUserProfile().getFilename());
 		model.addAttribute("upa", upa);
 		return "page/party/setting";
 	}
