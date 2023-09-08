@@ -298,7 +298,7 @@ public class PartyService {
 				media.setContentType("image");
 				media.setName(imageName);
 				media.setPostId(post.getId());
-				media.setPartyNo(1);
+				media.setPartyNo(post.getParty().getNo());
 				;
 				media.setUser(post.getUser());
 				images.add(media);
@@ -312,7 +312,7 @@ public class PartyService {
 				media.setContentType("video");
 				media.setName(videoName);
 				media.setPostId(post.getId());
-				media.setPartyNo(1);
+				media.setPartyNo(post.getParty().getNo());
 				media.setUser(post.getUser());
 				videos.add(media);
 			}
