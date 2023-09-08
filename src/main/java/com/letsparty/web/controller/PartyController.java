@@ -26,6 +26,7 @@ import com.letsparty.service.CategoryService;
 import com.letsparty.service.PartyService;
 import com.letsparty.service.UserPartyApplicationService;
 import com.letsparty.service.UserProfileService;
+import com.letsparty.service.ValidationService;
 import com.letsparty.util.PartyDataUtils;
 import com.letsparty.vo.Party;
 import com.letsparty.vo.Post;
@@ -48,6 +49,7 @@ public class PartyController {
 	private final CategoryService categoryService;
 	private final UserProfileService userProfileService;
 	private final UserPartyApplicationService userPartyApplicationService;
+	private final ValidationService validationService;
 	@Value("${s3.path.covers}")
 	private String coversPath;
 	@Value("${s3.path.profiles}")
@@ -244,20 +246,11 @@ public class PartyController {
 	// 퇴장시키기
 	@PostMapping("/{partyNo}/setting/kick")
 	@ResponseBody
-	public ResponseEntity<Map<String, Object>> kickOut(@PathVariable int partyNo,
-			@RequestParam String userId /* @AuthenticationPrincipal LoginUser loginUser */) {
-		Map<String, Object> response = new HashMap<>();
-	    UserPartyApplication savedUserPartyApplication = userPartyApplicationService.findByPartyNoAndUserId(partyNo, userId);
-	    if(savedUserPartyApplication == null) {
-	        response.put("status", "error");
-	        response.put("message", "유저를 찾을 수 없습니다.");
+	public ResponseEntity<Map<String, Object>> kickOut(@PathVariable int partyNo, @RequestParam String userId, @AuthenticationPrincipal LoginUser loginUser) {
+		Map<String, Object> response = validationService.kickOutUser(partyNo, userId, loginUser.getId());
+	    if ("error".equals(response.get("status"))) {
 	        return ResponseEntity.badRequest().body(response);
 	    }
-	    //TODO 멤버 강퇴를 시도하는 유저가 리더인지, 자기 자신을 탈퇴하려고 시도하지 않는지 loginUser인자를 사용하여 추가로 검사할 수 있음
-	    
-	    userPartyApplicationService.update(savedUserPartyApplication);
-	    response.put("status", "success");
-	    response.put("message", "퇴장 처리가 완료되었습니다.");
 	    return ResponseEntity.ok(response);
 	}
 	

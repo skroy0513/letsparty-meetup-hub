@@ -94,8 +94,8 @@ public class UserPartyApplicationService {
 		return upaList;
 	}
 	
-	public List<UserPartyApplication> findAllThatExceptMemberByUserId(String userId) {
-		List<UserPartyApplication> upaList = userPartyApplicationMapper.findAllThatExceptMemberByUserId(userId);
+	public List<UserPartyApplication> findAllExceptMemberByUserId(String userId) {
+		List<UserPartyApplication> upaList = userPartyApplicationMapper.findAllExceptMemberByUserId(userId);
 		return upaList;
 	}
 	
@@ -105,7 +105,7 @@ public class UserPartyApplicationService {
 	}
 	
 	public boolean isLeader(LoginUser loginUser) {
-		if (loginUser != null && !userPartyApplicationMapper.findAllThatExceptMemberByUserId(loginUser.getId()).isEmpty()) {
+		if (loginUser != null && !userPartyApplicationMapper.findAllExceptMemberByUserId(loginUser.getId()).isEmpty()) {
 			return true;
 		}
 		return false;
