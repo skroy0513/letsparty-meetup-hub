@@ -21,6 +21,7 @@ import com.letsparty.mapper.PartyMapper;
 import com.letsparty.security.user.LoginUser;
 import com.letsparty.service.CategoryService;
 import com.letsparty.service.PartyService;
+import com.letsparty.service.PostService;
 import com.letsparty.service.UserPartyApplicationService;
 import com.letsparty.service.UserProfileService;
 import com.letsparty.service.UserService;
@@ -44,6 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PartyController {
 	
 	private final PartyService partyService;
+	private final PostService postService;
 	private final CategoryService categoryService;
 	private final UserProfileService userProfileService;
 	private final UserPartyApplicationService userPartyApplicationService;
@@ -181,34 +183,49 @@ public class PartyController {
 	}
 	
 	@PreAuthorize("isAuthenticated()")
-	@GetMapping("/{partyNo}/post")
+	@GetMapping("/{partyNo}/post-form")
 	public String addPost(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, Model model) {
 		UserPartyApplication upa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, loginUser.getId());
 		model.addAttribute("upa", upa);
 		PostForm postForm = new PostForm();
 		model.addAttribute("postForm", postForm);
-		return "/page/party/post";
+		return "/page/party/post-form";
 	}
 	
 	// 게시물 제출
 	@PreAuthorize("isAuthenticated()")
-	@PostMapping("/{partyNo}/post")
+	@PostMapping("/{partyNo}/post-form")
 	public String addPost(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, @Valid PostForm postForm,
 			BindingResult error, Model model) {
 		UserPartyApplication upa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, loginUser.getId());
 		model.addAttribute("upa", upa);
 		// TODO 제목, 본문 글자 수 제한하는 유효성 구현하기
 		if (error.hasErrors()) {
-			return "page/party/post";
+			return "page/party/post-form";
 		}
 		partyService.insertPost(postForm, partyNo, loginUser.getId());
 		return "redirect:/party/{partyNo}";
 	}
 	
 	@GetMapping("/{partyNo}")
-	public String home(@PathVariable int partyNo, Model model) {
-		// partyNo를 사용하여 파티 게시물을 조회합니다.
-		return "page/party/home";
+	public String home(@PathVariable int partyNo) {
+		// partyNo를 사용해서 마지막 게시글 번호를 불러온다.
+		int postNo = postService.getLastPostNoByPartyNo(partyNo);
+		return "redirect:/party/{partyNo}/read/" + postNo;
+	}
+	
+	@GetMapping("/{partyNo}/read/{postNo}")
+	public String read(@PathVariable int partyNo, @PathVariable int postNo) {
+		//TODO 해당 게시글 번호의 조회수를 1 올린다.
+		postService.readIncrement(partyNo, postNo);
+		return "redirect:/party/{partyNo}/post/{postNo}";
+	}
+	
+	@GetMapping("/{partyNo}/post/{postNo}")
+	public String readPost() {
+		//TODO 해당 게시글 번호로 게시글 정보, 첨부파일 정보들을 불러와 저장한 뒤 화면에 표시한다.
+		//TODO 해당 게시글 번호의 앞뒤로 2개씩 게시글의 제목, 닉네임, 본문, 댓글수, 조회수를 가져와 화면에 표시한다.
+		return "page/party/post";
 	}
 	
 	@PreAuthorize("isAuthenticated()")

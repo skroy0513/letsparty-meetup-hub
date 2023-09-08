@@ -6,5 +6,28 @@
 		insert into post(post_no, party_no, user_id, post_title, post_content, is_notification)
 		values ((select nextval(#{party.no}) from dual), #{party.no}, #{user.id}, #{title}, #{content}, #{isNotification})
 	</insert>
+	
+	<select id="getLastPostNoByPartyNo" parameterType="int" resultType="int">
+		SELECT post_id
+		FROM post
+		WHERE party_no = #{value}
+		AND is_deleted = 0
+		ORDER BY post_no DESC;
+	</select>
+	
+	
+	<update id="readIncrement" parameterType="int">
+		UPDATE post
+		SET 
+			post_title = #{title},
+			post_content = #{content},
+			post_read_cnt = #{readCnt},
+			post_comment_cnt = #{commentCnt},
+			is_deleted = #{deleted}
+			post_is_notification = #{notification}
+		WHERE
+			post_id = #{id}
+	</update>
+	
 
 </mapper>
