@@ -115,6 +115,17 @@ public class PartyService {
 			List<String> tagsFromForm = partyCreateForm.getTags();
 			insertTags(tagsFromForm, party);
 		}
+		
+		// 기본 게시글 생성
+		Post post = new Post();
+
+		User user = userMapper.getUserById(leaderId);
+		post.setTitle("새 파티 생성을 축하합니다!!");
+		post.setContent("멤버를 초대해 즐거운 파티를 즐겨보세요~");
+		post.setNotification(false);
+		post.setParty(party);
+		post.setUser(user);
+		postMapper.insertPost(post);
 
 		return partyNo;
 	}

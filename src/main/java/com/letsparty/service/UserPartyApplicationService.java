@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.letsparty.mapper.PartyMapper;
 import com.letsparty.mapper.PartyReqMapper;
 import com.letsparty.mapper.UserMapper;
 import com.letsparty.mapper.UserPartyApplicationMapper;
@@ -28,6 +29,7 @@ public class UserPartyApplicationService {
 	private final UserProfileMapper userProfileMapper;
 	private final UserMapper userMapper;
 	private final PartyReqMapper partyReqMapper;
+	private final PartyMapper partyMapper;
 	@Value("${s3.path.covers}")
 	private String coversPath;
 	@Value("${s3.path.profiles}")
@@ -71,7 +73,9 @@ public class UserPartyApplicationService {
 		
 		addUserPartyApplicationWithApproved(partyNo, userId, 8, userProfile);
 		//TODO 파티 가입후 해당 파티의 인원 증가 메소드 필요...
-		
+		Party party = partyMapper.getPartyByNo(partyNo);
+		party.setCurCnt(party.getCurCnt() + 1);
+		partyMapper.updateParty(party);
 		return true;
 	}
 	
