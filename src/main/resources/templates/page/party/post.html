@@ -182,7 +182,7 @@
 
 						<!-- 투표 -->
 						<div th:if="${pa.poll}" class="my-3" id="poll">
-							<div class="border">
+							<div class="border" id="poll-button">
 								<div class="background-color-gray border-bottom d-flex align-items-center">
 									<div class="col-1 me-2 d-flex justify-content-center">
 										<div class="">
@@ -194,7 +194,6 @@
 											<h6 class="me-2">
 												<strong th:text="${pa.poll.endedAt gt #dates.createNow() ? '투표 중' : '투표 완료'}" class="post-item-text-color">투표 중</strong>
 											</h6>
-											<h6 class="text-muted"> 10명 참여</h6>
 										</div>
 										<h6 class="my-1"><strong th:text="${pa.poll.title}">최고의 보드게임은?</strong></h6>
 									</div>
@@ -209,6 +208,37 @@
 									</ul>
 								</div>
 							</div>
+							<div id="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+							</div>
+							<div th:if="${loginUpa}" class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+								  <div class="modal-content">
+									<div class="modal-header">
+									  <h1 class="modal-title fs-5" id="exampleModalLabel" th:text="${pa.poll.title}"></h1>
+									  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<form th:action="@{/party/{partyNo}/poll/{postNo}(partyNo = ${partyNo}, postNo = ${post.no})}" method="post" id="pollForm">
+											<ul>
+												<li th:each="option : ${pa.pollOptions}" class="text-muted my-1">
+													<i th:data="${option.optionPk}" class="fa-regular fa-circle post-item-text-color"></i>
+													<span th:text="${option.optionName}">루미큐브</span>
+													<span class="numberOfPoll"><span th:text="${option.numberOfPoll}"></span>명 투표</span>
+												</li>
+											</ul>
+											<select class="sr-only" name="optionPk" id="pollSelect">
+												<option disabled selected value=""></option>
+												<option th:each="option : ${pa.pollOptions}" th:value="${option.optionPk}"></option>
+											</select>
+										</form>
+									</div>
+									<div class="modal-footer">
+									  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+									  <button type="button" class="btn btn-primary" id="vote">투표하기</button>
+									</div>
+								  </div>
+								</div>
+							  </div>
 						</div>
 
 					</div>

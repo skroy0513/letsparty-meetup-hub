@@ -11,6 +11,10 @@
 	    </selectKey>
 	</insert>
 	
+	<insert id="insertPollAnswer">
+		INSERT INTO poll_answer (user_id, poll_option_pk)
+		VALUES (#{userId}, #{optionPk})
+	</insert>
 
 	<insert id="insertPollOption" parameterType="PollOption" useGeneratedKeys="true" keyProperty="optionPk">
 	    insert into poll_option(poll_option_no, poll_no, poll_option_name, number_of_poll)
@@ -47,5 +51,58 @@
 		WHERE
 			poll_no = #{value}
 	</select>
-
+	
+	<select id="getPollOptionByOptionPk" parameterType="int" resultType="PollOption">
+		SELECT
+			poll_option_pk as optionPk,
+			poll_no as "poll.no",
+			poll_option_no as optionNo,
+			poll_option_name as optionName,
+			number_of_poll as numberOfPoll
+		FROM
+			poll_option
+		WHERE
+			poll_option_pk = #{value}
+	</select>
+	
+	<select id="getAnswerByOptionPk" resultType="PollAnswer">
+		SELECT
+			poll_answer_no as no,
+			user_id as id,
+			poll_option_pk as "pollOptionNo.optionPk"
+		FROM
+			poll_answer
+		WHERE
+			poll_option_pk = #{value}
+	</select>
+	
+	<select id="getAnswerByUserIdAndOptionPk" resultType="PollAnswer">
+		SELECT
+			poll_answer_no as no,
+			user_id as id,
+			poll_option_pk as "pollOptionNo.optionPk"
+		FROM
+			poll_answer
+		WHERE
+			poll_option_pk = #{optionPk}
+		AND
+			user_id = #{userId}
+	</select>
+	
+	<update id="updateOption" parameterType="PollOption">
+		UPDATE poll_option
+		SET
+			poll_option_name = #{optionName},
+			number_of_poll = #{numberOfPoll}
+		WHERE
+			poll_option_pk = #{optionPk}
+	</update>
+	
+	<delete id="deletePollAnswer">
+		DELETE FROM poll_answer
+		WHERE
+			poll_option_pk = #{optionPk}
+		AND
+			user_id = #{userId}
+	</delete>
 </mapper>

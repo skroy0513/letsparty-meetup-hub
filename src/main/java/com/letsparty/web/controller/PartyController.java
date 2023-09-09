@@ -269,6 +269,14 @@ public class PartyController {
 	}
 	
 	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/{partyNo}/poll/{postNo}")
+	public String pollAnswer(@AuthenticationPrincipal LoginUser loginUser, @PathVariable int partyNo, @PathVariable int postNo, @RequestParam int optionPk) {
+		log.info("optionPk -> {}", optionPk);
+		partyService.answerPollOption(loginUser.getId(), optionPk);
+		return "redirect:/party/{partyNo}/post/{postNo}";
+	}
+	
+	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/{partyNo}/setting")
 	public String setting(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, Model model) {
 		UserPartyApplication upa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, loginUser.getId());

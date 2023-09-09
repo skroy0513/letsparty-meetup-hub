@@ -30,6 +30,7 @@ import com.letsparty.vo.PartyReq;
 import com.letsparty.vo.PartyTag;
 import com.letsparty.vo.Place;
 import com.letsparty.vo.Poll;
+import com.letsparty.vo.PollAnswer;
 import com.letsparty.vo.PollOption;
 import com.letsparty.vo.Post;
 import com.letsparty.vo.User;
@@ -272,6 +273,9 @@ public class PartyService {
 		      pollMapper.insertPollOption(item);
 		   }
 	}
+	
+	// 투표 응답 추가 메서드
+	
 
 	// Tag를 추가해주는 메서드
 	private void insertTags(List<String> tagsFromForm, Party party) {
@@ -297,8 +301,6 @@ public class PartyService {
 
 	// 게시물용 미디어 추가 메서드
 	private void insertMedia(List<String> imageList, List<String> videoList, Post post) {
-		System.out.println("게시글의 번호는??");
-		System.out.println(post.getId());
 		List<Media> images = new ArrayList<>();
 		List<Media> videos = new ArrayList<>();
 		if (null != imageList) {
@@ -380,5 +382,34 @@ public class PartyService {
 		}
 
 		return partyList;
+	}
+
+	public void answerPollOption(String userId, int optionPk) {
+		boolean answerToggle = true;
+		int votedPk = 0;
+		PollOption savedOption = pollMapper.getPollOptionByOptionPk(optionPk);
+		
+		List<PollOption> savedOptionList = pollMapper.getPollOptionsByPollNo(savedOption.getPoll().getNo());
+		
+		for (PollOption option : savedOptionList) {
+			PollAnswer savedAnswer = pollMapper.getAnswerByUserIdAndOptionPk(userId, option.getOptionPk());
+			if (null != savedAnswer) {
+				answerToggle = false;
+				votedPk = savedAnswer.getPollOptionNo().getOptionPk();
+			}
+		}
+		
+		if (!answerToggle) {
+			pollMapper.deletePollAnswer(userId, votedPk);
+			PollOption decreaseOption = pollMapper.getPollOptionByOptionPk(votedPk);
+			decreaseOption.setNumberOfPoll(decreaseOption.getNumberOfPoll() - 1);
+			pollMapper.updateOption(decreaseOption);
+		}
+		pollMapper.insertPollAnswer(userId, optionPk);
+		
+		PollOption increaseOption = pollMapper.getPollOptionByOptionPk(optionPk);
+		
+		increaseOption.setNumberOfPoll(increaseOption.getNumberOfPoll() + 1);
+		pollMapper.updateOption(increaseOption);
 	}
 }

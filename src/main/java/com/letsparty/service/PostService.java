@@ -24,7 +24,6 @@ public class PostService {
 
 	public void readIncrement(int partyNo, int postNo) {
 		Post post = postMapper.getPostByPostNoAndPartyNo(partyNo, postNo);
-		System.out.println(post.toString());
 		post.setReadCnt(post.getReadCnt() + 1);
 		postMapper.readIncrement(post);
 	}
@@ -37,11 +36,9 @@ public class PostService {
 		int[] savedPostNos = postMapper.getPostNoWithCurPostNoLimit5(partyNo, postNo);
 		List<SimplePostDto> sPostDtos = new ArrayList<>();
 		for (int pNo : savedPostNos) {
-			System.out.println(pNo);
 			SimplePostDto sPostDto = postMapper.getSimplePostByPostNoAndPartyNo(partyNo, pNo);
 			sPostDtos.add(sPostDto);
 		}
-		System.out.println(sPostDtos.toString());
 		return sPostDtos;
 	}
 
