@@ -25,7 +25,7 @@ public class PostService {
 	public void readIncrement(int partyNo, int postNo) {
 		Post post = postMapper.getPostByPostNoAndPartyNo(partyNo, postNo);
 		post.setReadCnt(post.getReadCnt() + 1);
-		postMapper.readIncrement(post);
+		postMapper.updatePost(post);
 	}
 
 	public Post getPostByPostNoAndPartyNo(int partyNo, int postNo) {

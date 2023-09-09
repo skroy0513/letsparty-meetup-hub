@@ -10,13 +10,13 @@
 </head>
 <div layout:fragment="content-top" class="content">
 	<div class="row mb-3">
-		<div class="col-12 d-flex" th:classappend="${#lists.contains(sPostNos, beginEndNo.beginNo) ? 'justify-content-end' : ''}" style="gap: 10px;">
-			<div th:if="${!#lists.contains(sPostNos, beginEndNo.beginNo)}" class="prev">
+		<div class="col-12 d-flex" th:classappend="${hasBeginNo ? 'justify-content-end' : ''}" style="gap: 10px;">
+			<div th:if="${!hasBeginNo}" class="prev">
 				<a th:href="@{/party/{partyNo}/read/{postNo}(partyNo=${partyNo}, postNo=${thirdBeginEndNo.beginNo})}">
 					<i class="fa-solid fa-chevron-left"></i>
 				</a>
 			</div>
-			<div class="preview-container" th:classappend="${#lists.contains(sPostNos, beginEndNo.beginNo) ? 'justify-content-end' : ''}">
+			<div class="preview-container" th:classappend="${hasBeginNo ? 'justify-content-end' : ''}">
 				<div th:each="simPost : ${simPosts}" class="preview-item" th:classappend="${simPost.postNo == post.no ? 'link' : ''}">
 					<a th:href="@{/party/{partyNo}/read/{postNo}(partyNo=${simPost.partyNo}, postNo=${simPost.postNo})}">
 						<div class="item-title">
@@ -34,7 +34,7 @@
 					</a>
 				</div>
 			</div>
-			<div th:if="${!#lists.contains(sPostNos, beginEndNo.endNo)}" class="next">
+			<div th:if="${!hasEndNo}" class="next">
 				<a th:href="@{/party/{partyNo}/read/{postNo}(partyNo=${partyNo}, postNo=${thirdBeginEndNo.endNo})}">
 					<i class="fa-solid fa-chevron-right"></i>
 				</a>

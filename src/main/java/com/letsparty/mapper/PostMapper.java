@@ -16,7 +16,7 @@ public interface PostMapper {
 
 	Post getPostByPostNoAndPartyNo(@Param("partyNo") int partyNo,@Param("postNo") int postNo);
 
-	void readIncrement(Post post);
+	void updatePost(Post post);
 
 	int[] getPostNoWithCurPostNoLimit5(@Param("partyNo") int partyNo,@Param("postNo") int postNo);
 

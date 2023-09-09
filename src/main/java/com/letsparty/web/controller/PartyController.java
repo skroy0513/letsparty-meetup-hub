@@ -22,6 +22,7 @@ import com.letsparty.dto.PartyReqDto;
 import com.letsparty.dto.PostAttachment;
 import com.letsparty.dto.SimplePostDto;
 import com.letsparty.mapper.PartyMapper;
+import com.letsparty.security.user.CustomUserDetails;
 import com.letsparty.security.user.LoginUser;
 import com.letsparty.service.CategoryService;
 import com.letsparty.service.MediaService;
@@ -250,17 +251,22 @@ public class PartyController {
 		model.addAttribute("pa",pa);
 		
 		// 해당 게시글 번호의 앞뒤로 2개씩 게시글의 제목, 닉네임, 본문, 댓글수, 조회수를 가져와 화면에 표시한다.
-		List<SimplePostDto> spostDto = postService.getSimplePostLimit5(partyNo, postNo);
-		model.addAttribute("simPosts", spostDto);
+		List<SimplePostDto> sPostDto = postService.getSimplePostLimit5(partyNo, postNo);
+		model.addAttribute("simPosts", sPostDto);
 		
 		// 마지막 게시글번호가 포함되면 오른쪽 정렬을 하기 위한 로직
-		List<Integer> sPostNos = new ArrayList<>();
-		for (SimplePostDto sPost : spostDto) {
-			sPostNos.add(sPost.getPostNo());
-		}
 		BeginEndPostNo beginEndNo = postService.getBeginAndEndPostNo(partyNo);
-		model.addAttribute("beginEndNo", beginEndNo);
-		model.addAttribute("sPostNos", sPostNos);
+		boolean hasBeginNo = false;
+		boolean hasEndNo = false;
+		if (beginEndNo.getBeginNo() != 0 && beginEndNo.getBeginNo() == sPostDto.get(0).getPostNo()) {
+			hasBeginNo = true;
+		}
+		if (beginEndNo.getEndNo() != 0 && beginEndNo.getEndNo() == sPostDto.get(sPostDto.size() - 1).getPostNo()) {
+			hasEndNo = true;
+		}
+		
+		model.addAttribute("hasBeginNo", hasBeginNo);
+		model.addAttribute("hasEndNo", hasEndNo);
 		
 		// 현재 게시글 번호에서 3번째 이후, 이전 게시글 번호 가져오는 로직
 		BeginEndPostNo thirdBeginEndNo = postService.getThirdBeginAndEndPostNo(partyNo, postNo);

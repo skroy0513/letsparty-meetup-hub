@@ -131,7 +131,7 @@
 		    ) as endNo;
 	</select>
 	
-	<update id="readIncrement" parameterType="Post">
+	<update id="updatePost" parameterType="Post">
 		UPDATE post
 		SET 
 			post_title = #{title},
@@ -146,5 +146,4 @@
 			post_no = #{no}
 	</update>
 	
-
 </mapper>
