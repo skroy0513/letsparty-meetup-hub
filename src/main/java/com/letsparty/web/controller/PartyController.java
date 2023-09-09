@@ -1,5 +1,6 @@
 package com.letsparty.web.controller;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -232,14 +234,13 @@ public class PartyController {
 	}
 	
 	@GetMapping("/{partyNo}/post/{postNo}")
-	public String readPost(@PathVariable("partyNo") int partyNo, @PathVariable("postNo") int postNo, @AuthenticationPrincipal LoginUser loginUser, Model model) {
-		if (null != loginUser) {
-			User user = userService.getUserByName(loginUser.getId());
-			UserPartyApplication loginUpa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, loginUser.getId());
+	public String readPost(@PathVariable("partyNo") int partyNo, @PathVariable("postNo") int postNo, Principal principal, Authentication authentication, Model model) {
+		if (principal != null && authentication.getAuthorities().stream().noneMatch(authority -> authority.getAuthority().equals("ROLE_USER_PENDING"))) {
+			UserPartyApplication loginUpa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, principal.getName());
 			if (null != loginUpa) {
 				model.addAttribute("loginUpa", loginUpa);
 			}
-			model.addAttribute("loginUser", user);
+			model.addAttribute("loginUser", principal.getName());
 		}
 		
 		if (postNo != 0) {
