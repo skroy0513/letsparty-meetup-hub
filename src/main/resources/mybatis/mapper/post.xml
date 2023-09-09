@@ -7,7 +7,7 @@
 		values ((select nextval(#{party.no}) from dual), #{party.no}, #{user.id}, #{title}, #{content}, #{isNotification})
 	</insert>
 	
-	<select id="getLastPostNoByPartyNo" parameterType="int" resultType="int">
+	<select id="getLastPostNoByPartyNo" parameterType="int" resultType="integer">
 		SELECT post_no
 		FROM post
 		WHERE party_no = #{value}

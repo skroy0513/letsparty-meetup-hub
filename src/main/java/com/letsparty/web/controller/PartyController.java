@@ -225,7 +225,9 @@ public class PartyController {
 	
 	@GetMapping("/{partyNo}/read/{postNo}")
 	public String read(@PathVariable("partyNo") int partyNo, @PathVariable("postNo") int postNo) {
-		postService.readIncrement(partyNo, postNo);
+		if (postNo != 0) {
+			postService.readIncrement(partyNo, postNo);
+		}
 		return "redirect:/party/{partyNo}/post/{postNo}";
 	}
 	
@@ -240,37 +242,39 @@ public class PartyController {
 			model.addAttribute("loginUser", user);
 		}
 		
-		// 해당 게시글 번호로 게시글 정보, 첨부파일 정보들을 불러와 저장한 뒤 화면에 표시한다.
-		Post post = postService.getPostByPostNoAndPartyNo(partyNo, postNo);
-		UserPartyApplication upa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, post.getUser().getId());
-		model.addAttribute("post", post);
-		model.addAttribute("upa", upa);
-		
-		// 게시글의 각종 첨부 파일 내용들(이미지, 동영상, 지도, 투표)
-		PostAttachment pa = mediaService.getMediaByPostId(post.getId());
-		model.addAttribute("pa",pa);
-		
-		// 해당 게시글 번호의 앞뒤로 2개씩 게시글의 제목, 닉네임, 본문, 댓글수, 조회수를 가져와 화면에 표시한다.
-		List<SimplePostDto> sPostDto = postService.getSimplePostLimit5(partyNo, postNo);
-		model.addAttribute("simPosts", sPostDto);
-		
-		// 마지막 게시글번호가 포함되면 오른쪽 정렬을 하기 위한 로직
-		BeginEndPostNo beginEndNo = postService.getBeginAndEndPostNo(partyNo);
-		boolean hasBeginNo = false;
-		boolean hasEndNo = false;
-		if (beginEndNo.getBeginNo() != 0 && beginEndNo.getBeginNo() == sPostDto.get(0).getPostNo()) {
-			hasBeginNo = true;
+		if (postNo != 0) {
+			// 해당 게시글 번호로 게시글 정보, 첨부파일 정보들을 불러와 저장한 뒤 화면에 표시한다.
+			Post post = postService.getPostByPostNoAndPartyNo(partyNo, postNo);
+			UserPartyApplication upa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, post.getUser().getId());
+			model.addAttribute("post", post);
+			model.addAttribute("upa", upa);
+			
+			// 게시글의 각종 첨부 파일 내용들(이미지, 동영상, 지도, 투표)
+			PostAttachment pa = mediaService.getMediaByPostId(post.getId());
+			model.addAttribute("pa",pa);
+			
+			// 해당 게시글 번호의 앞뒤로 2개씩 게시글의 제목, 닉네임, 본문, 댓글수, 조회수를 가져와 화면에 표시한다.
+			List<SimplePostDto> sPostDto = postService.getSimplePostLimit5(partyNo, postNo);
+			model.addAttribute("simPosts", sPostDto);
+			
+			// 마지막 게시글번호가 포함되면 오른쪽 정렬을 하기 위한 로직
+			BeginEndPostNo beginEndNo = postService.getBeginAndEndPostNo(partyNo);
+			boolean hasBeginNo = false;
+			boolean hasEndNo = false;
+			if (beginEndNo.getBeginNo() != 0 && beginEndNo.getBeginNo() == sPostDto.get(0).getPostNo()) {
+				hasBeginNo = true;
+			}
+			if (beginEndNo.getEndNo() != 0 && beginEndNo.getEndNo() == sPostDto.get(sPostDto.size() - 1).getPostNo()) {
+				hasEndNo = true;
+			}
+			
+			model.addAttribute("hasBeginNo", hasBeginNo);
+			model.addAttribute("hasEndNo", hasEndNo);
+			
+			// 현재 게시글 번호에서 3번째 이후, 이전 게시글 번호 가져오는 로직
+			BeginEndPostNo thirdBeginEndNo = postService.getThirdBeginAndEndPostNo(partyNo, postNo);
+			model.addAttribute("thirdBeginEndNo", thirdBeginEndNo);
 		}
-		if (beginEndNo.getEndNo() != 0 && beginEndNo.getEndNo() == sPostDto.get(sPostDto.size() - 1).getPostNo()) {
-			hasEndNo = true;
-		}
-		
-		model.addAttribute("hasBeginNo", hasBeginNo);
-		model.addAttribute("hasEndNo", hasEndNo);
-		
-		// 현재 게시글 번호에서 3번째 이후, 이전 게시글 번호 가져오는 로직
-		BeginEndPostNo thirdBeginEndNo = postService.getThirdBeginAndEndPostNo(partyNo, postNo);
-		model.addAttribute("thirdBeginEndNo", thirdBeginEndNo);
 		return "page/party/post";
 	}
 	

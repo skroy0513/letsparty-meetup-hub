@@ -19,7 +19,12 @@ public class PostService {
 	private final PostMapper postMapper;
 
 	public int getLastPostNoByPartyNo(int partyNo) {
-		return postMapper.getLastPostNoByPartyNo(partyNo);
+		Integer lastPostNo = postMapper.getLastPostNoByPartyNo(partyNo);
+		if (null == lastPostNo) {
+			lastPostNo = 0;
+		}
+		System.out.println(lastPostNo);
+		return lastPostNo;
 	}
 
 	public void readIncrement(int partyNo, int postNo) {

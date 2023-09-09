@@ -12,7 +12,7 @@ public interface PostMapper {
 
 	void insertPost(Post post);
 
-	int getLastPostNoByPartyNo(int partyNo);
+	Integer getLastPostNoByPartyNo(int partyNo);
 
 	Post getPostByPostNoAndPartyNo(@Param("partyNo") int partyNo,@Param("postNo") int postNo);
 
