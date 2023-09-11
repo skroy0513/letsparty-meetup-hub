@@ -3,10 +3,12 @@ package com.letsparty.web.controller;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.letsparty.dto.BeginEndPostNo;
 import com.letsparty.dto.PartyReqDto;
@@ -32,13 +36,10 @@ import com.letsparty.service.PartyService;
 import com.letsparty.service.PostService;
 import com.letsparty.service.UserPartyApplicationService;
 import com.letsparty.service.UserProfileService;
-import com.letsparty.service.UserService;
+import com.letsparty.service.ValidationService;
 import com.letsparty.util.PartyDataUtils;
 import com.letsparty.vo.Media;
 import com.letsparty.vo.Party;
-import com.letsparty.vo.PartyReq;
-import com.letsparty.vo.Post;
-import com.letsparty.vo.User;
 import com.letsparty.vo.UserPartyApplication;
 import com.letsparty.vo.UserProfile;
 import com.letsparty.web.form.PartyForm;
@@ -193,6 +194,22 @@ public class PartyController {
 		return "redirect:/party/{partyNo}/setting" ;
 	}
 	
+	@PostMapping("/{partyNo}/delete")
+	public String deleteParty(@AuthenticationPrincipal LoginUser loginUser, @PathVariable int partyNo, RedirectAttributes attributes) {
+		Party savedParty = partyService.getPartyByNo(partyNo);
+	    if (!savedParty.getLeader().getId().equals(loginUser.getId())) {
+	        return "redirect:/party/{partyNo}";
+	    }
+	    UserPartyApplication savedUpa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, loginUser.getId());
+	    if (!userPartyApplicationService.isPartyDeletable (partyNo)) {
+	    	attributes.addFlashAttribute("errorMessage", "파티에 멤버가 남아있으므로 파티를 삭제할 수 없습니다.");
+	    	return "redirect:/party/{partyNo}/setting";
+	    } else {
+	    	partyService.deleteParty(savedParty, savedUpa);
+	    	return "redirect:/";
+	    }
+	}
+	
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/{partyNo}/post-form")
 	public String addPost(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, Model model) {
@@ -299,6 +316,33 @@ public class PartyController {
 	public String withdraw(@PathVariable("partyNo") int partyNo, @PathVariable("upaNo") int upaNo) {
 		userPartyApplicationService.withdraw(upaNo);
 		return "redirect:/party/{partyNo}";
+	}
+	
+	// 퇴장시키기 화면
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/{partyNo}/setting/member")
+	public String kickOutPage(@PathVariable int partyNo, Model model, @AuthenticationPrincipal LoginUser loginUser) {
+		List<UserPartyApplication> userPartyApplications = partyService.getUserPartyApplications(partyNo, loginUser.getNo());
+		Party savedParty = partyService.getPartyByNo(partyNo);
+		// 자신이 해당 파티의 리더가 아니라면 리다이렉트
+		if(!savedParty.getLeader().getId().equals(loginUser.getId())) {
+			return "redirect:/party/{partyNo}";
+		}
+		model.addAttribute("users", userPartyApplications);
+		model.addAttribute("partyNo", partyNo);
+		model.addAttribute("profilesPath", profilesPath);
+		return "page/party/kick-out";
+	}
+	
+	// 퇴장시키기
+	@PostMapping("/{partyNo}/setting/kick")
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> kickOut(@PathVariable int partyNo, @RequestParam String userId, @AuthenticationPrincipal LoginUser loginUser) {
+		Map<String, Object> response = userPartyApplicationService.kickOutUser(partyNo, userId, loginUser.getId());
+	    if ("error".equals(response.get("status"))) {
+	        return ResponseEntity.badRequest().body(response);
+	    }
+	    return ResponseEntity.ok(response);
 	}
 	
 	@PreAuthorize("isAuthenticated()")

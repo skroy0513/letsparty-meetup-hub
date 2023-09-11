@@ -49,6 +49,7 @@
 		INNER JOIN user_profile up ON upa.profile_no = up.profile_no
 		WHERE upa.party_no = #{partyNo}
 		AND upa.user_id = #{userId}
+		AND upa.application_status = '승인'
 	</select>
 
 	<select id="findAllByPartyNo" parameterType="int" resultType="UserPartyApplication">
@@ -102,17 +103,9 @@
 			</choose>
 			role_no, "userProfile.nickname"
 	</select>
-	
-
-	<select id="countPartyMemberByPartyNoAndStatus" resultType="int">
-		SELECT COUNT(*)
-		FROM user_party_application
-		WHERE party_no = #{partyNo}
-		AND application_status = #{status};
-  	</select>
     
 	<!-- 사용자가 리더인 파티들 조회 -->
-	<select id="findAllThatNotMemberByUserId" parameterType="string" resultType="UserPartyApplication">
+	<select id="findAllExceptMemberByUserId" parameterType="string" resultType="UserPartyApplication">
 		select 
 			upa.application_no	as no,
 			upa.party_no		as "party.no",
@@ -126,6 +119,14 @@
 		inner join party p on upa.party_no = p.party_no
 		where user_id = #{value}
 		and role_no != 8
+		and application_status = '승인';
+	</select>
+	
+	<!-- 현재 파티 멤버의 수 -->
+	<select id="countApprovedMember" resultType="int">
+		select count(*) 
+		from user_party_application 
+		where party_no = #{partyNo} 
 		and application_status = '승인';
 	</select>
 	
@@ -146,6 +147,7 @@
 		WHERE upa.user_id = #{value}
 		AND application_status = '승인';
 	</select>
+	
 
 	<update id="update" parameterType="UserPartyApplication">
 		UPDATE user_party_application
@@ -157,6 +159,7 @@
 		WHERE
 			application_no = #{no}
 	</update>
+	
 	
 	<delete id="withdraw" parameterType="int">
 		DELETE FROM 

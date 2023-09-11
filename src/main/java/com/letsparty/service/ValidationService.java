@@ -1,11 +1,16 @@
 package com.letsparty.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 
 import com.letsparty.exception.DuplicateEmailException;
 import com.letsparty.exception.DuplicateUserIdException;
+import com.letsparty.vo.Party;
+import com.letsparty.vo.UserPartyApplication;
 import com.letsparty.web.form.SignupForm;
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 public class ValidationService {
 	
 	private final UserService userService;
+	private final PartyService partyService;
+	private final UserPartyApplicationService userPartyApplicationService;
 
 	public boolean checkstep1(SignupForm signupForm, BindingResult errors) {
 
@@ -85,5 +92,4 @@ public class ValidationService {
 		
 		return checkDuplicate;
 	}
-
 }

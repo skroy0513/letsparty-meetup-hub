@@ -21,10 +21,9 @@ public interface UserPartyApplicationMapper {
 	);
 	void update(UserPartyApplication userPartyApplication);
 	
-	int countPartyMemberByPartyNoAndStatus(@Param("partyNo")int partyNo, @Param("status")String status);
-
-	List<UserPartyApplication> findAllThatExceptMemberByUserId(String userId);
+	List<UserPartyApplication> findAllExceptMemberByUserId(String userId);
 	List<UserPartyApplication> findAllByUserId(String userId);
 	void withdraw(int upaNo);
+	int countApprovedMember(int partyNo);
 
 }
