@@ -96,7 +96,7 @@ public class PartyInterceptor implements HandlerInterceptor {
 					dto.setStartTime(event.getStart().format(formatter));
 					events.add(dto);
 				}
-//				modelAndView.addObject("events", events);
+				modelAndView.addObject("events", events);
 				modelAndView.addObject("chatRooms", chatRooms);
 				modelAndView.addObject("member", user);
 			}
