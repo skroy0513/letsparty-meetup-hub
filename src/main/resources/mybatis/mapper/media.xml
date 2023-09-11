@@ -10,5 +10,23 @@
 			(#{media.partyNo}, #{media.user.id}, #{media.contentType}, #{media.name}, #{media.path}, #{media.size}, #{media.postId})
 		</foreach>
 	</insert>
+	
+	<select id="getMediaByPostId" parameterType="long" resultType="Media">
+		SELECT
+			media_no as no,
+			party_no as partyNo,
+			user_id as "user.id",
+			content_type as contentType,
+			created_at as createdAt,
+			is_deleted as deleted,
+			media_name as name,
+			media_path as path,
+			media_size as size,
+			post_id as postId
+		FROM
+			media
+		WHERE
+			post_id = #{value}
+	</select>
 
 </mapper>

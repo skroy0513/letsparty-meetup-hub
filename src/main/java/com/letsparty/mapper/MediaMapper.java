@@ -11,4 +11,6 @@ public interface MediaMapper {
 
 	void insertMedia(List<Media> images);
 
+	List<Media> getMediaByPostId(long postId);
+
 }

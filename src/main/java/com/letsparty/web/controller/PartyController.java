@@ -1,5 +1,7 @@
 package com.letsparty.web.controller;
 
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,14 +23,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.letsparty.dto.BeginEndPostNo;
 import com.letsparty.dto.PartyReqDto;
+import com.letsparty.dto.PostAttachment;
+import com.letsparty.dto.SimplePostDto;
+import com.letsparty.mapper.PartyMapper;
+import com.letsparty.security.user.CustomUserDetails;
 import com.letsparty.security.user.LoginUser;
 import com.letsparty.service.CategoryService;
+import com.letsparty.service.MediaService;
 import com.letsparty.service.PartyService;
+import com.letsparty.service.PostService;
 import com.letsparty.service.UserPartyApplicationService;
 import com.letsparty.service.UserProfileService;
 import com.letsparty.service.ValidationService;
 import com.letsparty.util.PartyDataUtils;
+import com.letsparty.vo.Media;
 import com.letsparty.vo.Party;
 import com.letsparty.vo.UserPartyApplication;
 import com.letsparty.vo.UserProfile;
@@ -44,9 +55,12 @@ import lombok.extern.slf4j.Slf4j;
 public class PartyController {
 	
 	private final PartyService partyService;
+	private final PostService postService;
+	private final MediaService mediaService;
 	private final CategoryService categoryService;
 	private final UserProfileService userProfileService;
 	private final UserPartyApplicationService userPartyApplicationService;
+	private final UserService userService;
 	@Value("${s3.path.covers}")
 	private String coversPath;
 	@Value("${s3.path.profiles}")
@@ -197,34 +211,97 @@ public class PartyController {
 	}
 	
 	@PreAuthorize("isAuthenticated()")
-	@GetMapping("/{partyNo}/post")
+	@GetMapping("/{partyNo}/post-form")
 	public String addPost(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, Model model) {
 		UserPartyApplication upa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, loginUser.getId());
 		model.addAttribute("upa", upa);
 		PostForm postForm = new PostForm();
 		model.addAttribute("postForm", postForm);
-		return "/page/party/post";
+		return "/page/party/post-form";
 	}
 	
 	// 게시물 제출
 	@PreAuthorize("isAuthenticated()")
-	@PostMapping("/{partyNo}/post")
+	@PostMapping("/{partyNo}/post-form")
 	public String addPost(@PathVariable int partyNo, @AuthenticationPrincipal LoginUser loginUser, @Valid PostForm postForm,
 			BindingResult error, Model model) {
 		UserPartyApplication upa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, loginUser.getId());
 		model.addAttribute("upa", upa);
 		// TODO 제목, 본문 글자 수 제한하는 유효성 구현하기
 		if (error.hasErrors()) {
-			return "page/party/post";
+			return "page/party/post-form";
 		}
 		partyService.insertPost(postForm, partyNo, loginUser.getId());
 		return "redirect:/party/{partyNo}";
 	}
 	
 	@GetMapping("/{partyNo}")
-	public String home(@PathVariable int partyNo, Model model) {
-		// partyNo를 사용하여 파티 게시물을 조회합니다.
-		return "page/party/home";
+	public String home(@PathVariable int partyNo) {
+		// partyNo를 사용해서 마지막 게시글 번호를 불러온다.
+		int postNo = postService.getLastPostNoByPartyNo(partyNo);
+		return "redirect:/party/{partyNo}/read/" + postNo;
+	}
+	
+	@GetMapping("/{partyNo}/read/{postNo}")
+	public String read(@PathVariable("partyNo") int partyNo, @PathVariable("postNo") int postNo) {
+		if (postNo != 0) {
+			postService.readIncrement(partyNo, postNo);
+		}
+		return "redirect:/party/{partyNo}/post/{postNo}";
+	}
+	
+	@GetMapping("/{partyNo}/post/{postNo}")
+	public String readPost(@PathVariable("partyNo") int partyNo, @PathVariable("postNo") int postNo, Principal principal, Authentication authentication, Model model) {
+		if (principal != null && authentication.getAuthorities().stream().noneMatch(authority -> authority.getAuthority().equals("ROLE_USER_PENDING"))) {
+			UserPartyApplication loginUpa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, principal.getName());
+			if (null != loginUpa) {
+				model.addAttribute("loginUpa", loginUpa);
+			}
+			model.addAttribute("loginUser", principal.getName());
+		}
+		
+		if (postNo != 0) {
+			// 해당 게시글 번호로 게시글 정보, 첨부파일 정보들을 불러와 저장한 뒤 화면에 표시한다.
+			Post post = postService.getPostByPostNoAndPartyNo(partyNo, postNo);
+			UserPartyApplication upa = userPartyApplicationService.findByPartyNoAndUserId(partyNo, post.getUser().getId());
+			model.addAttribute("post", post);
+			model.addAttribute("upa", upa);
+			
+			// 게시글의 각종 첨부 파일 내용들(이미지, 동영상, 지도, 투표)
+			PostAttachment pa = mediaService.getMediaByPostId(post.getId());
+			model.addAttribute("pa",pa);
+			
+			// 해당 게시글 번호의 앞뒤로 2개씩 게시글의 제목, 닉네임, 본문, 댓글수, 조회수를 가져와 화면에 표시한다.
+			List<SimplePostDto> sPostDto = postService.getSimplePostLimit5(partyNo, postNo);
+			model.addAttribute("simPosts", sPostDto);
+			
+			// 마지막 게시글번호가 포함되면 오른쪽 정렬을 하기 위한 로직
+			BeginEndPostNo beginEndNo = postService.getBeginAndEndPostNo(partyNo);
+			boolean hasBeginNo = false;
+			boolean hasEndNo = false;
+			if (beginEndNo.getBeginNo() != 0 && beginEndNo.getBeginNo() == sPostDto.get(0).getPostNo()) {
+				hasBeginNo = true;
+			}
+			if (beginEndNo.getEndNo() != 0 && beginEndNo.getEndNo() == sPostDto.get(sPostDto.size() - 1).getPostNo()) {
+				hasEndNo = true;
+			}
+			
+			model.addAttribute("hasBeginNo", hasBeginNo);
+			model.addAttribute("hasEndNo", hasEndNo);
+			
+			// 현재 게시글 번호에서 3번째 이후, 이전 게시글 번호 가져오는 로직
+			BeginEndPostNo thirdBeginEndNo = postService.getThirdBeginAndEndPostNo(partyNo, postNo);
+			model.addAttribute("thirdBeginEndNo", thirdBeginEndNo);
+		}
+		return "page/party/post";
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/{partyNo}/poll/{postNo}")
+	public String pollAnswer(@AuthenticationPrincipal LoginUser loginUser, @PathVariable int partyNo, @PathVariable int postNo, @RequestParam int optionPk) {
+		log.info("optionPk -> {}", optionPk);
+		partyService.answerPollOption(loginUser.getId(), optionPk);
+		return "redirect:/party/{partyNo}/post/{postNo}";
 	}
 	
 	@PreAuthorize("isAuthenticated()")

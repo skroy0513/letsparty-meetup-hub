@@ -8,4 +8,6 @@ import com.letsparty.vo.Place;
 public interface PlaceMapper {
 	
 	void insertPlace(Place place);
+
+	Place getPlaceByPostId(long postId);
 }

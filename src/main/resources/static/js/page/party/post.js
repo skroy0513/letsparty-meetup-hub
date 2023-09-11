@@ -1,168 +1,67 @@
-let $openImage = $("#openimage");
-let $openVideo = $("#openvideo");
-let $imageInput = $("#imageInput");
-let $videoInput = $("#videoInput");
-let $imageContainer = $(".image-container")
-let $videoContainer = $(".video-container")
-let $partyPostForm = $("#party-post-form")
-let num = 0;
-$openImage.on("click", function() {
-	$imageInput.click();
-})
-$openVideo.on("click", function() {
-	$videoInput.click();
-})
+let pics = document.querySelectorAll(".pic");
+let vids = document.querySelectorAll(".vid");
+let lightbox = document.querySelector("#lightbox");
+let lightboxImage = document.querySelector("#lightboxImage");
+let lightboxVideo = document.querySelector("#lightboxVideo");
+let $button = $("#button");
+let $pollButton = $("#poll-button");
+let pollbuttons = document.querySelectorAll(".modal-body i");
+let pollSelect = document.querySelector("#pollSelect");
+let $vote = $("#vote");
 
-// 이미지 추가하고 표시하기
-function addAndDisplayImage(file, savedName, num) {
-    let newHTML = `
-        <div class="image-item image${num}">
-            <img src="${URL.createObjectURL(file)}" alt="">
-            <i class="fa-regular fa-circle-xmark" onclick="deleteImage(${num})"></i>
-        </div>`;
-    
-    $imageContainer.append(newHTML);
-    
-    $("<input>").attr({
-        type: "hidden",
-        name: "imageName[]",
-        class: "image" + num
-    }).val(savedName).appendTo($partyPostForm);
-    
-    console.log("이미지 업로드 성공");
+for(i = 0; i < pics.length; i++){
+    pics[i].addEventListener("click", showLightbox)
+}
+function showLightbox() {
+    let imgLocation = this.getAttribute("src"); 
+    console.log(imgLocation)
+    lightboxImage.setAttribute("src", imgLocation);
+    lightboxVideo.setAttribute("src", "");
+    lightboxVideo.removeAttribute("controls")
+    lightbox.style.display = "block";
+    lightboxVideo.style.backgroundColor = "#2c2c2c00"   
 }
 
-// 동영상 추가하고 표시하기
-function addAndDisplayVideo(file, savedName, num) {
-    let newHTML = `
-    	<div class="video-item video${num}">
-            <video src="${URL.createObjectURL(file)}" alt=""></video>
-            <i class="fa-solid fa-circle-play"></i>
-            <i class="cancel fa-regular fa-circle-xmark " onclick=deleteVideo(${num})></i>
-        </div>`
-    
-    $videoContainer.append(newHTML);
-    
-    $("<input>").attr({
-        type: "hidden",
-        name: "videoName[]",
-        class: "video" + num
-    }).val(savedName).appendTo($partyPostForm);
-    
-    console.log("동영상 업로드 성공");
+for(i = 0; i < vids.length; i++){
+    vids[i].addEventListener("click", playLightBox)
+}
+function playLightBox(){
+    let vidLocation = this.getAttribute("src");
+    console.log(vidLocation)
+    lightboxVideo.setAttribute("src", vidLocation);
+    lightboxVideo.setAttribute("controls", true);
+    lightboxImage.setAttribute("src", "");
+    lightbox.style.display = "block";
+    lightboxVideo.style.backgroundColor = "#2c2c2c"
 }
 
-// 이미지 서버로 보내고 nanoId 발급
-async function uploadImageAndGetSavedName(file) {
-    let formdata = new FormData();
-    formdata.append("file", file);
-    
-    return new Promise(function(resolve, reject) {
-        $.ajax({
-            url: "/upload/media",
-            type: 'POST',
-            data: formdata,
-            processData: false,
-            contentType: false
-        }).done(function(response) {
-            let savedName = response.savedName;
-            resolve(savedName);
-        }).fail(function() {
-            reject();
+lightbox.onclick = function() {
+    lightbox.style.display = "none";
+}
+
+$pollButton.on("click", function(){
+    $button.click();
+})
+
+for (i = 0; i < pollbuttons.length; i++){
+    pollbuttons[i].addEventListener("click", function(){
+        pollbuttons.forEach(b => {
+            b.classList.remove("fa-solid");
+            b.classList.remove("fa-circle-dot");
+            b.classList.add("fa-regular");
+            b.classList.add("fa-circle");
         });
-    });
+        this.classList.add("fa-solid");
+        this.classList.add("fa-circle-dot");
+        this.classList.remove("fa-regular");
+        this.classList.remove("fa-circle");
+        let optionNo = this.getAttribute("data");
+        console.log(optionNo);
+        pollSelect.value = optionNo;
+    })
 }
 
-// 동영상 서버로 보내고 nanoId 발급
-async function uploadVideoAndGetSavedName(file) {
-    let formdata = new FormData();
-    formdata.append("file", file);
-    
-    return new Promise(function(resolve, reject) {
-        $.ajax({
-            url: "/upload/media",
-            type: 'POST',
-            data: formdata,
-            processData: false,
-            contentType: false
-        }).done(function(response) {
-            let savedName = response.savedName;
-            resolve(savedName);
-        }).fail(function() {
-            reject();
-        });
-    });
-}
-
-$imageInput.on("change", async function(e) {
-	let files = Array.from(e.target.files)
-	console.log(files);
-	if (files && files.length > 0) {
-		for (let i = 0; i < files.length; i++) {
-			let file = files[i];
-			if (file.size >= 30*1024*1024) {
-				alert("파일 크기는 30MB를 초과할 수 없습니다.");
-				return;
-			}
-			if ($(".image-item").length > 8){
-				alert("이미지는 최대 9개까지만 추가 가능합니다.");
-				return;
-			}
-			
-			try {
-				let savedName = await uploadImageAndGetSavedName(file);
-				addAndDisplayImage(file, savedName, num);
-				num++;
-			} catch(error) {
-				console.log("이미지 업로드 실패");
-			}
-		}
-	}
+$vote.on("click", function(){
+    console.log("투표 제출");
+    $("#pollForm").submit();
 })
-
-$videoInput.on("change", async function(e) {
-	let files = Array.from(e.target.files)
-	console.log(files);
-	
-	if (files && files.length > 0) {
-		for (let i = 0; i < files.length; i++) {
-			let file = files[i];
-			if (file.size >= 30*1024*1024) {
-				alert("파일 크기는 30MB를 초과할 수 없습니다.");
-				return;
-			}
-			if ($(".video-item").length > 2){
-				alert("동영상은 최대 3개까지만 추가 가능합니다.");
-				return;
-			}
-			try {
-				let savedName = await uploadVideoAndGetSavedName(file);
-				console.log("비디오 업로드 성공");
-				console.log(num);
-				console.log(savedName);
-				addAndDisplayVideo(file, savedName, num);
-				num++;
-			} catch(error){
-				console.log("비디오 업로드 실패");
-			}
-		}
-	}
-})
-function deleteImage(i) {
-	if (confirm("이미지를 삭제하시겠습니까?")) {
-		$(".image" + i).remove();
-	}
-}
-
-function deleteVideo(i) {
-	if (confirm("동영상을 삭제하시겠습니까?")) {
-		$(".video" + i).remove();
-	}
-}
-
-let urlParams = new URLSearchParams(window.location.search);
-const showAlert = urlParams.get('req');
-console.log(showAlert);
-if (showAlert === 'fail') {
-    alert('파티의 가입조건과 맞지 않습니다.');
-}
