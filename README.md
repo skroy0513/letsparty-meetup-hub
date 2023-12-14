@@ -42,5 +42,7 @@
  ┃ ┃ ┣ 📂util
 ```
 # ERD
+![렛츠파티mysql (1)](https://github.com/skroy0513/paris/assets/117910568/6c164c5e-d0a9-40ca-abb0-49373b7f1339)
+
 # API
 # Workflow 및 구현 패턴
