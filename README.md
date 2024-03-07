@@ -1,4 +1,8 @@
-# Tech Stacks
+# Let's Party
+원하는 카테고리와 주제로 사람들과 소통할 수 잇는 공간을 제공해주는 웹사이트
+공통된 주제로 모인 사람들의 커뮤니티가 "파티"이다.
+"LetsParty" 게시판을 통해 "파티"간의 소통을 할 수 있다.
+## 개발환경
 - Back-End
   - Java
   - Spring Boot
@@ -11,38 +15,10 @@
   - Ajax
 - Database
   - MySql
-# Project Structure
-```
-📦letsparty
- ┣ 📂config
- ┣ 📂dto
- ┣ 📂exception  // 커스텀 예외 및 에러 클래스
- ┣ 📂info       // pagination
- ┣ 📂mapper
- ┣ 📂security   // oauth 및 인증/인가
- ┃ ┣ 📂oauth
- ┃ ┃ ┣ 📂exception
- ┃ ┃ ┗ 📂info
- ┃ ┣ 📂service
- ┃ ┣ 📂user
- ┣ 📂service
- ┣ 📂util
- ┣ 📂vo
- ┣ 📂web
- ┃ ┣ 📂advice
- ┃ ┣ 📂controller
- ┃ ┣ 📂form
- ┃ ┣ 📂interceptor
- ┃ ┣ 📂model
- ┃ ┗ 📂websocket  // 채팅관련 websocket 설정
- ┃ ┃ ┣ 📂controller
- ┃ ┃ ┣ 📂dto
- ┃ ┃ ┣ 📂interceptor
- ┃ ┃ ┣ 📂service
- ┃ ┃ ┣ 📂util
-```
-# ERD
+
+## ERD
 ![렛츠파티mysql (1)](https://github.com/skroy0513/paris/assets/117910568/6c164c5e-d0a9-40ca-abb0-49373b7f1339)
 
 # API
+
 # Workflow 및 구현 패턴
